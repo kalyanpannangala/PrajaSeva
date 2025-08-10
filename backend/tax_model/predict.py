@@ -19,16 +19,16 @@ def ask_float(prompt, default=0.0):
 
 def main():
     print("Enter taxpayer details (press Enter to accept default where shown):")
-    age = int(input("Age [30]: ").strip() or 30)
-    annual_income = float(input("Annual Income (gross) [500000]: ").strip() or 500000)
-    is_salaried = input("Are you salaried? (y/n) [y]: ").strip().lower() or "y"
+    age = int(input("Age : ").strip() or 30)
+    annual_income = float(input("Annual Income (gross): ").strip() or 500000)
+    is_salaried = input("Are you salaried? (y/n): ").strip().lower() or "y"
     is_salaried = 1 if is_salaried in ['y','yes'] else 0
-    investment_80c = ask_float("Investment under 80C (Rs) [0]: ")
-    investment_80d = ask_float("Investment under 80D (Rs) [0]: ")
-    home_loan_interest = ask_float("Home loan interest paid this FY (Rs) [0]: ")
-    education_loan_interest = ask_float("Education loan interest paid this FY (Rs) [0]: ")
-    donations_80g = ask_float("Donations eligible under 80G (Rs) [0]: ")
-    other_deductions = ask_float("Other deductions (80TTA/80TTB etc) (Rs) [0]: ")
+    investment_80c = ask_float("Investment under 80C (Rs) : ")
+    investment_80d = ask_float("Investment under 80D (Rs) : ")
+    home_loan_interest = ask_float("Home loan interest paid this FY (Rs) : ")
+    education_loan_interest = ask_float("Education loan interest paid this FY (Rs) : ")
+    donations_80g = ask_float("Donations eligible under 80G (Rs) : ")
+    other_deductions = ask_float("Other deductions (80TTA/80TTB etc) (Rs) : ")
 
     standard_deduction = 50000 if is_salaried==1 else 0
 
