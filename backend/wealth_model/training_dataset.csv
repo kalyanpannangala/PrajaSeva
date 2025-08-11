@@ -1,0 +1,370 @@
+user_age,investment_amount,years_to_invest,risk_level,liquidity,recommended_scheme
+21,26954,10,Zero Risk,Low,Public Provident Fund (PPF)
+44,89501,6,Zero Risk,Low,Public Provident Fund (PPF)
+40,102625,10,Zero Risk,Low,Public Provident Fund (PPF)
+27,1873,30,Zero Risk,Low,Public Provident Fund (PPF)
+53,14640,7,Zero Risk,Low,Public Provident Fund (PPF)
+24,74431,22,Zero Risk,Low,Public Provident Fund (PPF)
+48,133067,26,Zero Risk,Low,Public Provident Fund (PPF)
+49,82328,7,Zero Risk,Low,Public Provident Fund (PPF)
+46,116545,1,Zero Risk,Low,Public Provident Fund (PPF)
+62,851189,8,Zero Risk,Moderate,Senior Citizens Savings Scheme (SCSS)
+64,191726,21,Zero Risk,Moderate,Senior Citizens Savings Scheme (SCSS)
+61,73991,28,Zero Risk,Moderate,Senior Citizens Savings Scheme (SCSS)
+62,69112,9,Zero Risk,Moderate,Senior Citizens Savings Scheme (SCSS)
+62,19346,11,Zero Risk,Moderate,Senior Citizens Savings Scheme (SCSS)
+62,7019,23,Zero Risk,Moderate,Senior Citizens Savings Scheme (SCSS)
+39,687836,14,Zero Risk,Low,National Savings Certificate (NSC)
+61,989249,12,Zero Risk,Low,National Savings Certificate (NSC)
+57,85145,10,Zero Risk,Low,National Savings Certificate (NSC)
+32,198396,7,Zero Risk,Low,National Savings Certificate (NSC)
+52,382532,19,Zero Risk,Low,National Savings Certificate (NSC)
+63,473974,17,Zero Risk,Low,National Savings Certificate (NSC)
+55,457823,17,Zero Risk,Low,National Savings Certificate (NSC)
+18,215803,10,Zero Risk,Low,National Savings Certificate (NSC)
+23,357109,19,Zero Risk,Low,National Savings Certificate (NSC)
+26,771838,10,Zero Risk,Low,National Savings Certificate (NSC)
+55,229589,23,Zero Risk,Low,National Savings Certificate (NSC)
+20,908093,11,Zero Risk,Low,National Savings Certificate (NSC)
+24,270013,22,Zero Risk,Low,National Savings Certificate (NSC)
+21,727540,4,Zero Risk,Low,National Savings Certificate (NSC)
+54,712857,11,Zero Risk,Low,National Savings Certificate (NSC)
+58,952139,12,Zero Risk,Low,National Savings Certificate (NSC)
+65,450137,12,Zero Risk,Low,National Savings Certificate (NSC)
+49,932652,29,Zero Risk,Low,National Savings Certificate (NSC)
+61,718930,22,Zero Risk,Low,National Savings Certificate (NSC)
+19,969963,18,Zero Risk,Low,National Savings Certificate (NSC)
+28,555251,30,Zero Risk,Low,National Savings Certificate (NSC)
+58,40695,14,Zero Risk,Low,National Savings Certificate (NSC)
+55,942031,17,Zero Risk,Low,National Savings Certificate (NSC)
+57,395362,4,Zero Risk,Low,National Savings Certificate (NSC)
+50,256337,7,Zero Risk,Low,National Savings Certificate (NSC)
+45,177648,6,Zero Risk,Low,National Savings Certificate (NSC)
+21,633776,4,Zero Risk,Low,National Savings Certificate (NSC)
+39,106559,1,Zero Risk,Low,National Savings Certificate (NSC)
+33,121248,10,Zero Risk,Low,National Savings Certificate (NSC)
+26,47007,23,Zero Risk,Low,National Savings Certificate (NSC)
+19,659884,18,Zero Risk,Low,National Savings Certificate (NSC)
+60,681783,27,Zero Risk,Low,National Savings Certificate (NSC)
+56,673307,20,Zero Risk,Low,National Savings Certificate (NSC)
+41,691614,2,Zero Risk,Low,National Savings Certificate (NSC)
+63,876873,10,Zero Risk,Low,National Savings Certificate (NSC)
+40,164726,14,Zero Risk,Low,National Savings Certificate (NSC)
+30,306620,25,Zero Risk,Low,National Savings Certificate (NSC)
+21,566751,30,Zero Risk,Low,National Savings Certificate (NSC)
+60,274520,21,Zero Risk,Low,National Savings Certificate (NSC)
+23,383725,13,Zero Risk,Low,National Savings Certificate (NSC)
+19,726644,13,Zero Risk,Low,National Savings Certificate (NSC)
+21,223125,14,Zero Risk,Low,National Savings Certificate (NSC)
+22,638253,27,Zero Risk,Low,National Savings Certificate (NSC)
+51,581941,2,Zero Risk,Low,National Savings Certificate (NSC)
+30,536951,19,Zero Risk,Low,National Savings Certificate (NSC)
+36,465150,24,Zero Risk,Low,National Savings Certificate (NSC)
+26,524452,9,Zero Risk,Low,National Savings Certificate (NSC)
+23,434273,28,Zero Risk,Low,National Savings Certificate (NSC)
+30,132308,15,Zero Risk,Low,National Savings Certificate (NSC)
+54,947175,3,Zero Risk,Low,National Savings Certificate (NSC)
+48,5322,14,Zero Risk,Low,Kisan Vikas Patra (KVP)
+62,300807,10,Zero Risk,Low,Kisan Vikas Patra (KVP)
+18,583448,25,Zero Risk,Low,Kisan Vikas Patra (KVP)
+37,38226,11,Zero Risk,Low,Kisan Vikas Patra (KVP)
+52,13979,1,Zero Risk,Low,Kisan Vikas Patra (KVP)
+60,476369,26,Zero Risk,Low,Kisan Vikas Patra (KVP)
+58,738907,15,Zero Risk,Low,Kisan Vikas Patra (KVP)
+65,145933,30,Zero Risk,Low,Kisan Vikas Patra (KVP)
+35,545726,21,Zero Risk,Low,Kisan Vikas Patra (KVP)
+32,678475,2,Zero Risk,Low,Kisan Vikas Patra (KVP)
+40,380067,17,Zero Risk,Low,Kisan Vikas Patra (KVP)
+51,501675,4,Zero Risk,Low,Kisan Vikas Patra (KVP)
+24,706772,9,Zero Risk,Low,Kisan Vikas Patra (KVP)
+56,153217,4,Zero Risk,Low,Kisan Vikas Patra (KVP)
+50,178839,7,Zero Risk,Low,Kisan Vikas Patra (KVP)
+54,342733,8,Zero Risk,Low,Kisan Vikas Patra (KVP)
+39,638924,25,Zero Risk,Low,Kisan Vikas Patra (KVP)
+42,669099,10,Zero Risk,Low,Kisan Vikas Patra (KVP)
+31,482705,5,Zero Risk,Low,Kisan Vikas Patra (KVP)
+25,966902,13,Zero Risk,Low,Kisan Vikas Patra (KVP)
+55,842977,28,Zero Risk,Low,Kisan Vikas Patra (KVP)
+65,6120,25,Zero Risk,Low,Kisan Vikas Patra (KVP)
+36,731242,24,Zero Risk,Low,Kisan Vikas Patra (KVP)
+61,683552,14,Zero Risk,Low,Kisan Vikas Patra (KVP)
+57,716468,8,Zero Risk,Low,Kisan Vikas Patra (KVP)
+37,384955,11,Zero Risk,Low,Kisan Vikas Patra (KVP)
+44,427072,25,Zero Risk,Low,Kisan Vikas Patra (KVP)
+27,792099,29,Zero Risk,Low,Kisan Vikas Patra (KVP)
+46,533860,17,Zero Risk,Low,Kisan Vikas Patra (KVP)
+25,142697,8,Zero Risk,Low,Kisan Vikas Patra (KVP)
+41,373772,1,Zero Risk,Low,Kisan Vikas Patra (KVP)
+49,931871,18,Zero Risk,Low,Kisan Vikas Patra (KVP)
+38,602717,6,Zero Risk,Low,Kisan Vikas Patra (KVP)
+18,809303,22,Zero Risk,Low,Kisan Vikas Patra (KVP)
+42,688082,20,Zero Risk,Low,Kisan Vikas Patra (KVP)
+39,131623,21,Zero Risk,Low,Kisan Vikas Patra (KVP)
+31,599729,14,Zero Risk,Low,Kisan Vikas Patra (KVP)
+23,97658,1,Zero Risk,Low,Kisan Vikas Patra (KVP)
+21,138852,19,Zero Risk,Low,Kisan Vikas Patra (KVP)
+40,849617,18,Zero Risk,Low,Kisan Vikas Patra (KVP)
+41,316966,14,Zero Risk,Low,Kisan Vikas Patra (KVP)
+55,482510,7,Zero Risk,Low,Kisan Vikas Patra (KVP)
+33,487286,19,Zero Risk,Low,Kisan Vikas Patra (KVP)
+33,906732,6,Zero Risk,Low,Kisan Vikas Patra (KVP)
+27,858364,10,Zero Risk,Low,Kisan Vikas Patra (KVP)
+42,189945,8,Zero Risk,Low,Kisan Vikas Patra (KVP)
+65,70637,1,Zero Risk,Low,Kisan Vikas Patra (KVP)
+23,980931,6,Zero Risk,Low,Kisan Vikas Patra (KVP)
+28,224746,2,Zero Risk,Low,Kisan Vikas Patra (KVP)
+27,184897,3,Zero Risk,Low,Kisan Vikas Patra (KVP)
+48,73466,28,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+18,316609,22,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+58,807294,27,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+50,808078,29,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+62,681466,28,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+30,322340,3,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+64,682123,6,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+64,374146,9,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+32,360653,22,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+39,818727,26,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+19,356558,29,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+54,101856,3,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+48,653465,23,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+45,778677,20,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+42,542273,1,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+42,371069,28,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+19,398957,25,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+18,751123,26,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+49,734734,15,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+20,69055,30,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+52,654424,12,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+46,572371,16,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+61,682696,4,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+42,722787,20,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+60,153936,2,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+61,614998,9,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+19,238902,20,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+59,637538,25,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+59,5573,16,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+23,245756,14,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+65,186788,1,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+31,405123,30,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+50,35028,5,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+58,417326,22,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+48,312290,14,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+22,786222,11,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+23,326872,6,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+38,312277,3,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+32,850773,27,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+37,121098,1,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+43,399164,5,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+35,228702,30,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+56,246911,25,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+18,33305,3,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+35,532134,23,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+35,46632,20,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+62,75247,20,Zero Risk,Moderate,Post Office Monthly Income Scheme (POMIS)
+65,67312,11,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+60,133557,15,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+65,710792,19,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+65,13645,1,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+64,290157,13,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+60,149211,13,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+61,502711,14,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+61,424221,4,Zero Risk,Low,Pradhan Mantri Vaya Vandana Yojana (PMVVY)
+28,925672,15,Zero Risk,Low,RBI Floating Rate Savings Bonds
+61,213315,17,Zero Risk,Low,RBI Floating Rate Savings Bonds
+56,623277,19,Zero Risk,Low,RBI Floating Rate Savings Bonds
+49,969457,10,Zero Risk,Low,RBI Floating Rate Savings Bonds
+50,999806,30,Zero Risk,Low,RBI Floating Rate Savings Bonds
+55,679390,2,Zero Risk,Low,RBI Floating Rate Savings Bonds
+51,816011,21,Zero Risk,Low,RBI Floating Rate Savings Bonds
+36,310468,10,Zero Risk,Low,RBI Floating Rate Savings Bonds
+50,111212,24,Zero Risk,Low,RBI Floating Rate Savings Bonds
+27,660271,17,Zero Risk,Low,RBI Floating Rate Savings Bonds
+57,283958,26,Zero Risk,Low,RBI Floating Rate Savings Bonds
+19,471865,14,Zero Risk,Low,RBI Floating Rate Savings Bonds
+59,931860,28,Zero Risk,Low,RBI Floating Rate Savings Bonds
+31,669558,18,Zero Risk,Low,RBI Floating Rate Savings Bonds
+56,956541,27,Zero Risk,Low,RBI Floating Rate Savings Bonds
+49,155497,19,Zero Risk,Low,RBI Floating Rate Savings Bonds
+64,135917,7,Zero Risk,Low,RBI Floating Rate Savings Bonds
+40,752277,27,Zero Risk,Low,RBI Floating Rate Savings Bonds
+64,200132,13,Zero Risk,Low,RBI Floating Rate Savings Bonds
+44,194757,29,Zero Risk,Low,RBI Floating Rate Savings Bonds
+53,924634,18,Zero Risk,Low,RBI Floating Rate Savings Bonds
+29,162810,15,Zero Risk,Low,RBI Floating Rate Savings Bonds
+30,308404,10,Zero Risk,Low,RBI Floating Rate Savings Bonds
+40,591456,2,Zero Risk,Low,RBI Floating Rate Savings Bonds
+43,556080,2,Zero Risk,Low,RBI Floating Rate Savings Bonds
+38,814342,30,Zero Risk,Low,RBI Floating Rate Savings Bonds
+57,22417,29,Zero Risk,Low,RBI Floating Rate Savings Bonds
+53,112876,23,Zero Risk,Low,RBI Floating Rate Savings Bonds
+48,673474,9,Zero Risk,Low,RBI Floating Rate Savings Bonds
+52,728918,27,Zero Risk,Low,RBI Floating Rate Savings Bonds
+57,833681,19,Zero Risk,Low,RBI Floating Rate Savings Bonds
+24,692522,15,Zero Risk,Low,RBI Floating Rate Savings Bonds
+44,633800,9,Zero Risk,Low,RBI Floating Rate Savings Bonds
+60,78585,25,Zero Risk,Low,RBI Floating Rate Savings Bonds
+36,538904,2,Zero Risk,Low,RBI Floating Rate Savings Bonds
+18,730385,4,Zero Risk,Low,RBI Floating Rate Savings Bonds
+29,347079,29,Zero Risk,Low,RBI Floating Rate Savings Bonds
+28,90674,11,Zero Risk,Low,RBI Floating Rate Savings Bonds
+54,989345,8,Zero Risk,Low,RBI Floating Rate Savings Bonds
+61,629735,25,Zero Risk,Low,RBI Floating Rate Savings Bonds
+55,481623,9,Zero Risk,Low,RBI Floating Rate Savings Bonds
+40,445829,20,Zero Risk,Low,RBI Floating Rate Savings Bonds
+21,26217,24,Zero Risk,Low,RBI Floating Rate Savings Bonds
+50,704954,29,Zero Risk,Low,RBI Floating Rate Savings Bonds
+56,156938,10,Zero Risk,Low,RBI Floating Rate Savings Bonds
+23,372813,10,Zero Risk,Low,RBI Floating Rate Savings Bonds
+40,18071,25,Zero Risk,Low,RBI Floating Rate Savings Bonds
+64,19813,5,Zero Risk,Low,RBI Floating Rate Savings Bonds
+54,289709,3,Zero Risk,Low,RBI Floating Rate Savings Bonds
+48,728120,2,Zero Risk,Low,RBI Floating Rate Savings Bonds
+22,877658,14,Low Risk,Low,Tax-Free Infrastructure Bonds
+52,847213,4,Low Risk,Low,Tax-Free Infrastructure Bonds
+60,721714,10,Low Risk,Low,Tax-Free Infrastructure Bonds
+20,50537,24,Low Risk,Low,Tax-Free Infrastructure Bonds
+19,82586,9,Low Risk,Low,Tax-Free Infrastructure Bonds
+38,978698,26,Low Risk,Low,Tax-Free Infrastructure Bonds
+38,860285,13,Low Risk,Low,Tax-Free Infrastructure Bonds
+46,717047,24,Low Risk,Low,Tax-Free Infrastructure Bonds
+29,143805,8,Low Risk,Low,Tax-Free Infrastructure Bonds
+37,400947,23,Low Risk,Low,Tax-Free Infrastructure Bonds
+60,364534,5,Low Risk,Low,Tax-Free Infrastructure Bonds
+19,370039,18,Low Risk,Low,Tax-Free Infrastructure Bonds
+20,292328,15,Low Risk,Low,Tax-Free Infrastructure Bonds
+42,644477,9,Low Risk,Low,Tax-Free Infrastructure Bonds
+32,268833,14,Low Risk,Low,Tax-Free Infrastructure Bonds
+31,528481,4,Low Risk,Low,Tax-Free Infrastructure Bonds
+35,27095,28,Low Risk,Low,Tax-Free Infrastructure Bonds
+26,684030,15,Low Risk,Low,Tax-Free Infrastructure Bonds
+30,961758,7,Low Risk,Low,Tax-Free Infrastructure Bonds
+57,735313,16,Low Risk,Low,Tax-Free Infrastructure Bonds
+35,910851,8,Low Risk,Low,Tax-Free Infrastructure Bonds
+55,818681,14,Low Risk,Low,Tax-Free Infrastructure Bonds
+57,999499,3,Low Risk,Low,Tax-Free Infrastructure Bonds
+23,233135,2,Low Risk,Low,Tax-Free Infrastructure Bonds
+49,644388,21,Low Risk,Low,Tax-Free Infrastructure Bonds
+49,356951,17,Low Risk,Low,Tax-Free Infrastructure Bonds
+18,473333,8,Low Risk,Low,Tax-Free Infrastructure Bonds
+18,209684,24,Low Risk,Low,Tax-Free Infrastructure Bonds
+29,681574,29,Low Risk,Low,Tax-Free Infrastructure Bonds
+63,355093,27,Low Risk,Low,Tax-Free Infrastructure Bonds
+29,451255,15,Low Risk,Low,Tax-Free Infrastructure Bonds
+61,642922,30,Low Risk,Low,Tax-Free Infrastructure Bonds
+57,308306,14,Low Risk,Low,Tax-Free Infrastructure Bonds
+24,245195,14,Low Risk,Low,Tax-Free Infrastructure Bonds
+40,378631,26,Low Risk,Low,Tax-Free Infrastructure Bonds
+25,401642,16,Low Risk,Low,Tax-Free Infrastructure Bonds
+49,614180,16,Low Risk,Low,Tax-Free Infrastructure Bonds
+32,964350,4,Low Risk,Low,Tax-Free Infrastructure Bonds
+34,371148,1,Low Risk,Low,Tax-Free Infrastructure Bonds
+58,356791,10,Low Risk,Low,Tax-Free Infrastructure Bonds
+32,668104,6,Low Risk,Low,Tax-Free Infrastructure Bonds
+34,416519,16,Low Risk,Low,Tax-Free Infrastructure Bonds
+62,810931,13,Low Risk,Low,Tax-Free Infrastructure Bonds
+32,128672,30,Low Risk,Low,Tax-Free Infrastructure Bonds
+31,979907,2,Low Risk,Low,Tax-Free Infrastructure Bonds
+64,721531,13,Low Risk,Low,Tax-Free Infrastructure Bonds
+52,992622,9,Low Risk,Low,Tax-Free Infrastructure Bonds
+42,157027,17,Low Risk,Low,Tax-Free Infrastructure Bonds
+65,160883,26,Low Risk,Low,Tax-Free Infrastructure Bonds
+40,480786,6,Low Risk,High,Fixed Deposits (Top-rated Banks)
+37,252004,25,Low Risk,High,Fixed Deposits (Top-rated Banks)
+44,562038,20,Low Risk,High,Fixed Deposits (Top-rated Banks)
+57,698223,20,Low Risk,High,Fixed Deposits (Top-rated Banks)
+61,400631,14,Low Risk,High,Fixed Deposits (Top-rated Banks)
+19,170958,8,Low Risk,High,Fixed Deposits (Top-rated Banks)
+56,556342,25,Low Risk,High,Fixed Deposits (Top-rated Banks)
+48,113812,15,Low Risk,High,Fixed Deposits (Top-rated Banks)
+26,690704,15,Low Risk,High,Fixed Deposits (Top-rated Banks)
+55,597076,4,Low Risk,High,Fixed Deposits (Top-rated Banks)
+36,30333,7,Low Risk,High,Fixed Deposits (Top-rated Banks)
+38,513133,29,Low Risk,High,Fixed Deposits (Top-rated Banks)
+38,170775,2,Low Risk,High,Fixed Deposits (Top-rated Banks)
+48,198549,21,Low Risk,High,Fixed Deposits (Top-rated Banks)
+47,454908,12,Low Risk,High,Fixed Deposits (Top-rated Banks)
+63,579969,16,Low Risk,High,Fixed Deposits (Top-rated Banks)
+25,961521,25,Low Risk,High,Fixed Deposits (Top-rated Banks)
+56,641426,9,Low Risk,High,Fixed Deposits (Top-rated Banks)
+42,701666,5,Low Risk,High,Fixed Deposits (Top-rated Banks)
+37,696196,4,Low Risk,High,Fixed Deposits (Top-rated Banks)
+56,847068,19,Low Risk,High,Fixed Deposits (Top-rated Banks)
+53,269721,18,Low Risk,High,Fixed Deposits (Top-rated Banks)
+35,889946,25,Low Risk,High,Fixed Deposits (Top-rated Banks)
+45,212155,6,Low Risk,High,Fixed Deposits (Top-rated Banks)
+20,949001,2,Low Risk,High,Fixed Deposits (Top-rated Banks)
+55,583650,27,Low Risk,High,Fixed Deposits (Top-rated Banks)
+32,668596,4,Low Risk,High,Fixed Deposits (Top-rated Banks)
+52,944423,14,Low Risk,High,Fixed Deposits (Top-rated Banks)
+46,437542,3,Low Risk,High,Fixed Deposits (Top-rated Banks)
+40,740863,15,Low Risk,High,Fixed Deposits (Top-rated Banks)
+27,502899,21,Low Risk,High,Fixed Deposits (Top-rated Banks)
+57,501515,18,Low Risk,High,Fixed Deposits (Top-rated Banks)
+50,724487,22,Low Risk,High,Fixed Deposits (Top-rated Banks)
+47,450556,7,Low Risk,High,Fixed Deposits (Top-rated Banks)
+42,57717,29,Low Risk,High,Fixed Deposits (Top-rated Banks)
+20,716545,12,Low Risk,High,Fixed Deposits (Top-rated Banks)
+44,231794,22,Low Risk,High,Fixed Deposits (Top-rated Banks)
+19,201672,26,Low Risk,High,Fixed Deposits (Top-rated Banks)
+22,106665,23,Low Risk,High,Fixed Deposits (Top-rated Banks)
+35,443819,29,Low Risk,High,Fixed Deposits (Top-rated Banks)
+44,841890,18,Low Risk,High,Fixed Deposits (Top-rated Banks)
+50,641873,26,Low Risk,High,Fixed Deposits (Top-rated Banks)
+31,460604,16,Low Risk,High,Fixed Deposits (Top-rated Banks)
+58,202911,4,Low Risk,High,Fixed Deposits (Top-rated Banks)
+35,350754,11,Low Risk,High,Fixed Deposits (Top-rated Banks)
+54,717301,2,Low Risk,High,Fixed Deposits (Top-rated Banks)
+35,59514,30,Low Risk,High,Fixed Deposits (Top-rated Banks)
+38,607701,21,Low Risk,High,Fixed Deposits (Top-rated Banks)
+21,40649,29,Low Risk,High,Fixed Deposits (Top-rated Banks)
+49,739803,27,Low Risk,High,Fixed Deposits (Top-rated Banks)
+21,273624,12,Low Risk,High,Recurring Deposit (RD)
+29,683192,1,Low Risk,High,Recurring Deposit (RD)
+42,68584,8,Low Risk,High,Recurring Deposit (RD)
+19,900464,7,Low Risk,High,Recurring Deposit (RD)
+42,20038,15,Low Risk,High,Recurring Deposit (RD)
+65,384553,12,Low Risk,High,Recurring Deposit (RD)
+25,646729,28,Low Risk,High,Recurring Deposit (RD)
+46,525237,12,Low Risk,High,Recurring Deposit (RD)
+64,377065,11,Low Risk,High,Recurring Deposit (RD)
+39,79009,10,Low Risk,High,Recurring Deposit (RD)
+38,460894,16,Low Risk,High,Recurring Deposit (RD)
+46,265483,10,Low Risk,High,Recurring Deposit (RD)
+54,640355,1,Low Risk,High,Recurring Deposit (RD)
+31,666011,6,Low Risk,High,Recurring Deposit (RD)
+60,64521,5,Low Risk,High,Recurring Deposit (RD)
+39,388533,6,Low Risk,High,Recurring Deposit (RD)
+26,98158,10,Low Risk,High,Recurring Deposit (RD)
+23,755576,20,Low Risk,High,Recurring Deposit (RD)
+50,886042,17,Low Risk,High,Recurring Deposit (RD)
+31,701707,16,Low Risk,High,Recurring Deposit (RD)
+59,662389,24,Low Risk,High,Recurring Deposit (RD)
+32,887825,8,Low Risk,High,Recurring Deposit (RD)
+54,616516,1,Low Risk,High,Recurring Deposit (RD)
+28,164164,1,Low Risk,High,Recurring Deposit (RD)
+49,845686,7,Low Risk,High,Recurring Deposit (RD)
+51,507250,4,Low Risk,High,Recurring Deposit (RD)
+54,313732,21,Low Risk,High,Recurring Deposit (RD)
+27,493909,24,Low Risk,High,Recurring Deposit (RD)
+19,920651,8,Low Risk,High,Recurring Deposit (RD)
+33,904618,10,Low Risk,High,Recurring Deposit (RD)
+40,869651,22,Low Risk,High,Recurring Deposit (RD)
+35,783556,4,Low Risk,High,Recurring Deposit (RD)
+24,20884,8,Low Risk,High,Recurring Deposit (RD)
+35,642216,13,Low Risk,High,Recurring Deposit (RD)
+63,322787,7,Low Risk,High,Recurring Deposit (RD)
+50,828100,9,Low Risk,High,Recurring Deposit (RD)
+64,435589,2,Low Risk,High,Recurring Deposit (RD)
+38,744213,14,Low Risk,High,Recurring Deposit (RD)
+25,68297,3,Low Risk,High,Recurring Deposit (RD)
+65,348463,27,Low Risk,High,Recurring Deposit (RD)
+52,231046,6,Low Risk,High,Recurring Deposit (RD)
+22,6770,9,Low Risk,High,Recurring Deposit (RD)
+48,900480,16,Low Risk,High,Recurring Deposit (RD)
+23,144751,22,Low Risk,High,Recurring Deposit (RD)
+34,404595,24,Low Risk,High,Recurring Deposit (RD)
+49,786535,6,Low Risk,High,Recurring Deposit (RD)
+56,57621,25,Low Risk,High,Recurring Deposit (RD)
+36,462916,5,Low Risk,High,Recurring Deposit (RD)
+19,428434,8,Low Risk,High,Recurring Deposit (RD)
+23,491369,27,Low Risk,High,Recurring Deposit (RD)

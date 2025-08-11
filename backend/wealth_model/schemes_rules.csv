@@ -1,0 +1,12 @@
+scheme_name,category,issuer,interest_rate,lock_in_years,min_investment,max_investment,eligible_age_min,eligible_age_max,risk_level,liquidity,description
+Public Provident Fund (PPF),Govt Scheme,Ministry of Finance,7.1,15,500,150000,0,99,Zero Risk,Low,Long-term savings with tax benefits under Section 80C.
+Sukanya Samriddhi Yojana (SSY),Govt Scheme,Ministry of Finance,8.0,21,250,150000,0,10,Zero Risk,Low,Savings scheme for girl child with high interest and tax benefits.
+Senior Citizens Savings Scheme (SCSS),Govt Scheme,Post Office/Authorized Banks,8.2,5,1000,3000000,60,99,Zero Risk,Moderate,Best for senior citizens with quarterly interest payout.
+National Savings Certificate (NSC),Post Office Scheme,Post Office,7.7,5,1000,No Limit,0,99,Zero Risk,Low,Tax-saving fixed income instrument.
+Kisan Vikas Patra (KVP),Post Office Scheme,Post Office,7.5,10,1000,No Limit,0,99,Zero Risk,Low,Doubles your investment in 115 months.
+Post Office Monthly Income Scheme (POMIS),Post Office Scheme,Post Office,7.4,5,1000,900000,0,99,Zero Risk,Moderate,Monthly interest payouts for steady income.
+Pradhan Mantri Vaya Vandana Yojana (PMVVY),Govt Scheme,LIC of India,7.4,10,1500,1500000,60,99,Zero Risk,Low,Pension scheme for senior citizens.
+RBI Floating Rate Savings Bonds,Govt Scheme,RBI,8.05,7,1000,No Limit,0,99,Zero Risk,Low,Government-backed savings bonds.
+Tax-Free Infrastructure Bonds,Govt Scheme,GOI-backed entities,6.5,10,5000,No Limit,0,99,Low Risk,Low,Tax-free interest income.
+Fixed Deposits (Top-rated Banks),Private Safe Option,SBI/HDFC/ICICI,6.75,1,5000,No Limit,0,99,Low Risk,High,Secure bank deposits insured up to ₹5 lakh by DICGC.
+Recurring Deposit (RD),Private Safe Option,SBI/HDFC/ICICI,6.5,0.5,500,No Limit,0,99,Low Risk,High,Monthly savings option with fixed returns.
