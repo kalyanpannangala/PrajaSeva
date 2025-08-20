@@ -6,7 +6,7 @@ import type { NextPage } from 'next';
 import { Edit3, Save, BotMessageSquare, Loader2, AlertTriangle } from 'lucide-react';
 import Header from '../../../components/Header'; 
 
-// --- Define a type for the user's full profile ---
+// --- Define a type for the user's full profile from the API ---
 interface UserProfile {
   full_name: string;
   email: string;
@@ -20,17 +20,40 @@ interface UserProfile {
   disability_status: boolean | null;
 }
 
+// --- Define a separate type for the data displayed in the form ---
+// This allows disability_status to be a string ('Yes'/'No') for the dropdown.
+interface ProfileDisplayData extends Omit<UserProfile, 'disability_status'> {
+    disability_status: 'Yes' | 'No' | null;
+}
+
+
+// --- Configuration for dropdown fields ---
+const dropdownOptions = {
+    gender: ['Male', 'Female', 'Other'],
+    state: [
+        'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+        'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+        'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka',
+        'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+        'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+        'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+    ],
+    caste: ['General', 'OBC', 'SC', 'ST'],
+    education_level: ['Postgraduate', 'Graduate', 'Secondary', 'Un-educated', 'Other'],
+    employment_type: ['Government-employed', 'Private-employed', 'Self-employed', 'Farmer', 'Student', 'Retired', 'Un-employed'],
+    disability_status: ['No', 'Yes'],
+};
+
+
 const ProfilePage: NextPage = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState<Partial<UserProfile>>({});
-  const [initialProfileData, setInitialProfileData] = useState<Partial<UserProfile>>({});
+  const [isEditing, setIsEditing] = useState(false); // <-- FIX: Added the missing state
+  const [profileData, setProfileData] = useState<Partial<ProfileDisplayData>>({});
+  const [initialProfileData, setInitialProfileData] = useState<Partial<ProfileDisplayData>>({});
   
-  // --- UI State ---
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // --- Fetch user profile data on page load ---
   useEffect(() => {
     const fetchProfile = async () => {
       setIsLoading(true);
@@ -50,8 +73,15 @@ const ProfilePage: NextPage = () => {
           throw new Error('Failed to fetch profile data.');
         }
         const data: UserProfile = await response.json();
-        setProfileData(data);
-        setInitialProfileData(data); // Store initial state for cancel
+        
+        // Convert boolean disability_status to "Yes"/"No" for the dropdown
+        const displayData: ProfileDisplayData = {
+            ...data,
+            disability_status: data.disability_status ? 'Yes' : 'No'
+        };
+
+        setProfileData(displayData);
+        setInitialProfileData(displayData);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -72,6 +102,12 @@ const ProfilePage: NextPage = () => {
       setSuccessMessage(null);
       const token = localStorage.getItem('authToken');
 
+      // Convert disability_status back to boolean before sending to API
+      const dataToSend = {
+          ...profileData,
+          disability_status: profileData.disability_status === 'Yes'
+      };
+
       try {
           const response = await fetch('/api/user/profile', {
               method: 'PUT',
@@ -79,7 +115,7 @@ const ProfilePage: NextPage = () => {
                   'Content-Type': 'application/json',
                   'Authorization': `Bearer ${token}`
               },
-              body: JSON.stringify(profileData)
+              body: JSON.stringify(dataToSend)
           });
           const data = await response.json();
           if (!response.ok) throw new Error(data.message);
@@ -107,46 +143,47 @@ const ProfilePage: NextPage = () => {
       return <div className="flex flex-col items-center justify-center h-64 text-red-600 bg-red-50 p-8 rounded-xl"><AlertTriangle className="h-12 w-12 mb-4" /><p className="text-lg font-bold">An Error Occurred</p><p>{error}</p></div>;
     }
 
-    // --- Define the display order for fields ---
     const fieldOrder: (keyof UserProfile)[] = [
-      'email',
-      'full_name',
-      'age',
-      'gender',
-      'state',
-      'caste',
-      'education_level',
-      'employment_type',
-      'income',
-      'disability_status'
+      'email', 'full_name', 'age', 'gender', 'state', 'caste', 
+      'education_level', 'employment_type', 'income', 'disability_status'
     ];
 
     return (
       <div className="bg-white p-8 rounded-xl shadow-2xl border border-gray-200/80">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           {fieldOrder.map((key) => {
-            const value = profileData[key];
+            const value = profileData[key as keyof ProfileDisplayData];
             if (value === undefined) return null;
 
-            // --- FIX: Determine if the field should be permanently read-only ---
             const isPermanentlyReadOnly = key === 'email' || key === 'full_name';
             const isEditable = isEditing && !isPermanentlyReadOnly;
+            const isDropdown = Object.keys(dropdownOptions).includes(key);
 
             return (
               <div key={key}>
                 <label className="text-sm font-semibold text-gray-500 capitalize">{key.replace(/_/g, ' ')}</label>
-                <input 
-                  name={key}
-                  type={key === 'income' || key === 'age' ? 'number' : (key === 'email' ? 'email' : 'text')} 
-                  value={value !== null ? String(value) : ''} 
-                  readOnly={!isEditable} 
-                  onChange={handleInputChange}
-                  className={`w-full mt-1 p-3 text-lg rounded-lg border transition-all duration-300 ${
-                    isEditable
-                      ? 'border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#003366]' 
-                      : 'border-transparent bg-gray-100 cursor-default'
-                  }`} 
-                />
+                {isDropdown ? (
+                    <select
+                        name={key}
+                        value={String(value) ?? ''}
+                        disabled={!isEditable}
+                        onChange={handleInputChange}
+                        className={`w-full mt-1 p-3 text-lg rounded-lg border transition-all duration-300 ${isEditable ? 'border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#003366]' : 'border-transparent bg-gray-100 cursor-default appearance-none'}`}
+                    >
+                        {dropdownOptions[key as keyof typeof dropdownOptions].map(option => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
+                    </select>
+                ) : (
+                    <input 
+                        name={key}
+                        type={key === 'income' || key === 'age' ? 'number' : 'text'} 
+                        value={String(value) ?? ''} 
+                        readOnly={!isEditable} 
+                        onChange={handleInputChange}
+                        className={`w-full mt-1 p-3 text-lg rounded-lg border transition-all duration-300 ${isEditable ? 'border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#003366]' : 'border-transparent bg-gray-100 cursor-default'}`} 
+                    />
+                )}
               </div>
             );
           })}
@@ -191,5 +228,6 @@ const ProfilePage: NextPage = () => {
     </div>
   );
 };
+
 
 export default ProfilePage;
