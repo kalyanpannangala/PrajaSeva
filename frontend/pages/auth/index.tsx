@@ -1,10 +1,10 @@
-// app/auth/page.tsx
+// pages/auth.tsx
 'use client';
 
 import { useState } from 'react';
 import type { NextPage } from 'next';
 import { User, AtSign, Lock, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation'; // Correct import for App Router
+import { useRouter } from 'next/router'; // Correct import for Pages Router
 import { motion, AnimatePresence } from 'framer-motion';
 
 const UnifiedAuthPage: NextPage = () => {
@@ -14,146 +14,134 @@ const UnifiedAuthPage: NextPage = () => {
   const [fullName, setFullName] = useState('');
   
   // State to manage the UI flow
-  const [authStep, setAuthStep] = useState<'initial' | 'needsName'>('initial');
+  const [authStep, setAuthStep] = useState<'initial' | 'login' | 'signup' | 'pendingVerification'>('initial');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccessMessage('');
     setIsLoading(true);
-
+    setError('');
     try {
-      // --- Step 1: User enters email and password ---
-      if (authStep === 'initial') {
-        const response = await fetch('http://localhost:8000/api/auth/initiate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
+      const res = await fetch('/api/auth/check-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
 
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || 'Authentication failed.');
-        }
-
-        if (data.status === 'login_success') {
-          // --- LOGIN SUCCESS ---
-          localStorage.setItem('authToken', data.token);
-          router.push(data.redirectTo || '/dashboard');
-        } else if (data.status === 'new_user') {
-          // --- NEW USER: ASK FOR NAME ---
-          setAuthStep('needsName');
-        }
-      } 
-      // --- Step 2: New user provides full name ---
-      else if (authStep === 'needsName') {
-        if (!fullName) {
-          setError('Please enter your full name.');
-          setIsLoading(false);
-          return;
-        }
-        // --- SIGNUP LOGIC ---
-        const response = await fetch('http://localhost:8000/api/auth/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fullName, email, password }),
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
-        
-        // Show success message and wait for user to check email
-        setSuccessMessage(data.message);
+      if (data.exists) {
+        setAuthStep('login');
+      } else {
+        setAuthStep('signup');
       }
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred.');
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getDescription = () => {
-    if (authStep === 'needsName') return 'Please provide your name to create your account.';
-    return 'Enter your details to login or sign up.';
+  const handleFinalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    
+    if (authStep === 'login') {
+      // --- LOGIN LOGIC ---
+      try {
+        const res = await fetch('/api/auth/login', { // Assuming you have a login route
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        
+        localStorage.setItem('authToken', data.token);
+        router.push(data.redirectTo || '/dashboard');
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (authStep === 'signup') {
+      // --- SIGNUP LOGIC ---
+      try {
+        const res = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fullName, email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        
+        setAuthStep('pendingVerification');
+        setSuccessMessage(data.message);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
-  const getButtonText = () => {
-    if (isLoading) return 'Processing...';
-    if (authStep === 'needsName') return 'Create Account';
-    return 'Continue';
+  const getTitle = () => {
+    if (authStep === 'login') return 'Welcome Back';
+    if (authStep === 'signup') return 'Create Your Account';
+    if (authStep === 'pendingVerification') return 'Check Your Email';
+    return 'Welcome to PrajaSeva';
   };
 
   return (
     <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center font-sans">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-2xl border border-gray-200/80">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-2xl border border-gray-200/80">
         
-        {/* Header */}
         <div className="text-center">
-            <img 
-              src="/PS-Logo-Bg.png"
-              alt="PrajaSeva Logo"
-              className="h-16 mx-auto mb-4"
-            />
-            <h1 className="text-3xl font-bold text-[#003366]">
-                {authStep === 'needsName' ? 'Just one more step...' : ''}
-            </h1>
-            <p className="mt-2 text-gray-500">{getDescription()}</p>
+          <img src="/PS-Logo.png" alt="PrajaSeva Logo" className="h-16 mx-auto mb-4" />
+          <h1 className="text-3xl font-bold text-[#003366]">{getTitle()}</h1>
         </div>
 
-        {/* Success Message Display */}
-        {successMessage ? (
-            <div className="text-center p-4 bg-green-50 text-green-800 rounded-lg">
-                <p className="font-semibold">Success!</p>
-                <p>{successMessage}</p>
-            </div>
+        {authStep === 'pendingVerification' ? (
+          <div className="text-center p-4 bg-green-50 text-green-800 rounded-lg">
+            <p className="font-semibold">Success!</p>
+            <p>{successMessage}</p>
+          </div>
         ) : (
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-              {error && (
-                <div className="text-red-600 text-center text-sm font-medium p-3 bg-red-50 rounded-lg">{error}</div>
-              )}
-              <div className="space-y-4">
-                
-                {/* Full Name Input (Signup only, animated) */}
-                <AnimatePresence>
-                  {authStep === 'needsName' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.4, ease: 'easeInOut' }}
-                      className="relative overflow-hidden"
-                    >
+          <form onSubmit={authStep === 'initial' ? handleInitialSubmit : handleFinalSubmit} className="space-y-6">
+            {error && <div className="text-red-600 text-center text-sm font-medium p-3 bg-red-50 rounded-lg">{error}</div>}
+            
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><AtSign className="h-5 w-5 text-gray-400" /></div>
+              <input id="email-address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required readOnly={authStep !== 'initial'} className={`w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366] ${authStep !== 'initial' ? 'bg-gray-100 cursor-not-allowed' : ''}`} placeholder="Email address" />
+            </div>
+
+            <AnimatePresence>
+              {(authStep === 'login' || authStep === 'signup') && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4 overflow-hidden">
+                  {authStep === 'signup' && (
+                    <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><User className="h-5 w-5 text-gray-400" /></div>
-                      <input id="full-name" name="full-name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" placeholder="Full Name" />
-                    </motion.div>
+                      <input id="full-name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required placeholder="Full Name" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
+                    </div>
                   )}
-                </AnimatePresence>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Lock className="h-5 w-5 text-gray-400" /></div>
+                    <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-                {/* Email Input */}
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><AtSign className="h-5 w-5 text-gray-400" /></div>
-                  <input id="email-address" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required readOnly={authStep === 'needsName'} className={`w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366] ${authStep === 'needsName' ? 'bg-gray-100 cursor-not-allowed' : ''}`} placeholder="Email address" />
-                </div>
-
-                {/* Password Input */}
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Lock className="h-5 w-5 text-gray-400" /></div>
-                  <input id="password" name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required readOnly={authStep === 'needsName'} className={`w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366] ${authStep === 'needsName' ? 'bg-gray-100 cursor-not-allowed' : ''}`} placeholder="Password" />
-                </div>
-              </div>
-              
-              {/* Submit Button */}
-              <div>
-                <button type="submit" disabled={isLoading} className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-semibold rounded-lg text-white bg-[#003366] hover:bg-[#002244] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-gray-400">
-                  {getButtonText()}
-                  {!isLoading && <ArrowRight className="ml-2 h-6 w-6 transform group-hover:translate-x-1 transition-transform" />}
-                </button>
-              </div>
-            </form>
+            <button type="submit" disabled={isLoading} className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-semibold rounded-lg text-white bg-[#003366] hover:bg-[#002244] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-gray-400">
+              {isLoading ? 'Processing...' : 'Continue'}
+              {!isLoading && <ArrowRight className="ml-2 h-6 w-6 transform group-hover:translate-x-1 transition-transform" />}
+            </button>
+          </form>
         )}
       </div>
     </div>

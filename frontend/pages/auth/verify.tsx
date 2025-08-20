@@ -1,29 +1,36 @@
-// app/auth/verify/page.tsx
+// pages/auth/verify.tsx
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 
-const VerifyComponent = () => {
+const VerifyPage = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const token = searchParams.get('token');
     
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
     const [message, setMessage] = useState('Verifying your account...');
 
     useEffect(() => {
-        if (!token) {
+        // This effect will run whenever router.isReady or router.query changes.
+        // We wait until the router is ready and has parsed the query parameters.
+        if (!router.isReady) {
+            return; // Do nothing until the router is fully initialized.
+        }
+
+        // Now that the router is ready, we can safely access the token.
+        const { token } = router.query;
+
+        if (!token || typeof token !== 'string') {
             setStatus('error');
-            setMessage('No verification token found. Please check your email link.');
+            setMessage('No verification token found or the link is invalid.');
             return;
         }
 
         const verifyToken = async () => {
             try {
-                // IMPORTANT: Replace with your actual backend URL
-                const response = await fetch('http://localhost:8000/api/auth/verify', {
+                // The API endpoint is relative to your project root
+                const response = await fetch('/api/auth/verify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token }),
@@ -37,13 +44,12 @@ const VerifyComponent = () => {
 
                 // Store the token to keep the user logged in
                 localStorage.setItem('authToken', data.token);
-
                 setStatus('success');
                 setMessage('Verification successful! Redirecting...');
 
                 // Redirect to the privacy consent page after a short delay
                 setTimeout(() => {
-                    router.push('/privacy');
+                    router.push('/consent');
                 }, 2000);
 
             } catch (error: any) {
@@ -52,8 +58,10 @@ const VerifyComponent = () => {
             }
         };
 
+        // Call the verification function only when we are sure we have a token.
         verifyToken();
-    }, [token, router]);
+        
+    }, [router.isReady, router.query, router]); // Depend on router.isReady and router.query
 
     return (
         <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center font-sans">
@@ -67,12 +75,4 @@ const VerifyComponent = () => {
     );
 };
 
-// Wrap the component in Suspense as required by Next.js for useSearchParams
-const Verify = () => (
-    <Suspense fallback={<div>Loading...</div>}>
-        <VerifyComponent />
-    </Suspense>
-);
-
-export default Verify;
-
+export default VerifyPage;
