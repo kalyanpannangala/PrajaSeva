@@ -61,7 +61,7 @@ const DynamicProfileSetup: NextPage = () => {
     }
 
     try {
-        const response = await fetch('http://prajaseva-ai.vercel.app/api/user/setup', {
+        const response = await fetch('https://prajaseva-ai.vercel.app/api/user/setup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
