@@ -41,7 +41,8 @@ const Header: FC = () => {
                     throw new Error('Failed to fetch user profile');
                 }
                 const data = await response.json();
-                setUser(data);
+                // Assuming the API returns { full_name: '...' }
+                setUser({ name: data.full_name }); 
             } catch (error) {
                 console.error(error);
                 // Handle error, maybe redirect to login
