@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, FC } from 'react';
 import type { NextPage } from 'next';
 import { Bot, User, Send, Loader2 } from 'lucide-react';
-import Header from '../../components/Header'; // <-- Import the dedicated header
+import Header from '../../../components/Header'; // <-- Import the dedicated header
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- Type definitions for chat messages ---

@@ -8,3 +8,6 @@ cloudpickle
 python-dotenv
 google-generativeai
 api
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]
