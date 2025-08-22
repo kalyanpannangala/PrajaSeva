@@ -62,7 +62,7 @@ const SchemesPage: NextPage = () => {
         setProcessSteps([]);
         setSchemes([]);
 
-        const eventSource = new EventSource(`http://127.0.0.1:8000/schemes/predict?token=${token}`);
+        const eventSource = new EventSource(`https://prajaseva.onrender.com/schemes/predict?token=${token}`);
         
         eventSource.onmessage = (event) => {
             try {
