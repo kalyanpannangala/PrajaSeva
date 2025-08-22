@@ -6,7 +6,7 @@ import google.generativeai as genai
 from typing import List
 
 # Load environment variables from a .env file
-load_dotenv()
+load_dotenv(".env.local")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 AI_NAME = os.getenv("AI_NAME", "PrajaSeva AI")
 

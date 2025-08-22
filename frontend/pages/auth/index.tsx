@@ -6,6 +6,7 @@ import type { NextPage } from 'next';
 import { User, AtSign, Lock, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/router'; // Correct import for Pages Router
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link'; // Import the Link component
 
 const UnifiedAuthPage: NextPage = () => {
   // State for the form inputs
@@ -54,7 +55,7 @@ const UnifiedAuthPage: NextPage = () => {
     if (authStep === 'login') {
       // --- LOGIN LOGIC ---
       try {
-        const res = await fetch('/api/auth/login', { // Assuming you have a login route
+        const res = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -133,6 +134,18 @@ const UnifiedAuthPage: NextPage = () => {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Lock className="h-5 w-5 text-gray-400" /></div>
                     <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
                   </div>
+                  
+                  {/* --- FORGOT PASSWORD LINK --- */}
+                  {authStep === 'login' && (
+                    <div className="text-right">
+                        <Link href="/auth/forgot-password">
+                            <span className="text-sm font-medium text-[#0055A4] hover:text-[#003366] cursor-pointer">
+                                Forgot Password?
+                            </span>
+                        </Link>
+                    </div>
+                  )}
+
                 </motion.div>
               )}
             </AnimatePresence>
