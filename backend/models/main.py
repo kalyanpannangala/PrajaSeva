@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-# Import sub-apps from each model
-from schemes_model.api import app as schemes_app
-from tax_model.api import app as tax_app
-from wealth_model.api import app as wealth_app
-from chatbot import app as chatbot_app
+# --- FIX: Changed to relative imports with a leading dot (.) ---
+# This tells Python to look for these folders in the same directory as main.py
+from .schemes_model.api import app as schemes_app
+from .tax_model.api import app as tax_app
+from .wealth_model.api import app as wealth_app
+from .chatbot import app as chatbot_app
 
 # ---------------------- MAIN APP ----------------------
 app = FastAPI(title="PrajaSeva AI Platform")
