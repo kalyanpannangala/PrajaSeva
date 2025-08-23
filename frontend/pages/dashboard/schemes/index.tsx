@@ -62,7 +62,7 @@ const SchemesPage: NextPage = () => {
         setProcessSteps([]);
         setSchemes([]);
 
-        const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_BACKEND_SERVER}/schemes/predict?token=${token}`);
+        const eventSource = new EventSource(`https://kalyanpannangala-prajaseva.hf.space/schemes/predict?token=${token}`);
         
         eventSource.onmessage = (event) => {
             try {
