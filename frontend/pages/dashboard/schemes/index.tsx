@@ -6,9 +6,11 @@ import type { NextPage } from 'next';
 import Header from '../../../components/Header';
 import { 
   Landmark, AlertTriangle, BotMessageSquare, 
-  RefreshCw, User, Info, Edit, Loader2
+  RefreshCw, User, Info, Edit, Loader2, CheckCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { jwtDecode } from 'jwt-decode'; // <-- Import the JWT decode library
 
 // --- Type Definitions ---
 interface Scheme {
@@ -69,6 +71,9 @@ const SchemesPage: NextPage = () => {
     const [pageState, setPageState] = useState<'loading' | 'displaying' | 'error'>('loading');
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [analysisStatus, setAnalysisStatus] = useState('');
+    const router = useRouter();
+    const [isVerifyingAuth, setIsVerifyingAuth] = useState(true); // <-- New state for auth check
 
     const startAnalysis = async () => {
         const token = localStorage.getItem('authToken');
@@ -80,9 +85,9 @@ const SchemesPage: NextPage = () => {
 
         setIsAnalyzing(true);
         setError(null);
+        setSchemes([]); // Clear old schemes before starting
 
         try {
-            // --- FIX: Use the correct, full endpoint URL ---
             const response = await fetch("https://kalyanpannangala-prajaseva.hf.space/schemes/predict", {
                 method: "POST",
                 headers: {
@@ -119,9 +124,55 @@ const SchemesPage: NextPage = () => {
     };
 
     useEffect(() => {
+        let statusInterval: NodeJS.Timeout;
+        if (isAnalyzing) {
+            const statuses = [
+                "Connecting to analysis server...",
+                "Fetching your profile...",
+                "Running PrajaSeva AI model...",
+                "Validating results...",
+                "Finalizing recommendations..."
+            ];
+            let currentStatusIndex = 0;
+            setAnalysisStatus(statuses[currentStatusIndex]);
+
+            statusInterval = setInterval(() => {
+                currentStatusIndex++;
+                if (currentStatusIndex < statuses.length) {
+                    setAnalysisStatus(statuses[currentStatusIndex]);
+                }
+            }, 1500);
+        }
+        return () => clearInterval(statusInterval);
+    }, [isAnalyzing]);
+
+    useEffect(() => {
+        // --- NEW: Authentication Check ---
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            router.push('/auth');
+            return;
+        }
+        
+        try {
+            const decodedToken: { exp: number } = jwtDecode(token);
+            if (decodedToken.exp * 1000 < Date.now()) {
+                // Token is expired
+                localStorage.removeItem('authToken');
+                router.push('/auth');
+                return;
+            }
+        } catch (error) {
+            // Invalid token
+            localStorage.removeItem('authToken');
+            router.push('/auth');
+            return;
+        }
+        
+        setIsVerifyingAuth(false); // Auth check passed
+
+        // --- Fetch initial data ---
         const fetchInitialData = async () => {
-            const token = localStorage.getItem('authToken');
-            if (!token) { setError("Not authenticated."); setPageState('error'); return; }
             setPageState('loading');
             try {
                 const [profileRes, schemesRes] = await Promise.all([
@@ -147,10 +198,21 @@ const SchemesPage: NextPage = () => {
                 setPageState('error');
             }
         };
+        
         fetchInitialData();
-    }, []);
+    }, [router]);
+    
+    // --- Show a loading screen while verifying auth ---
+    if (isVerifyingAuth) {
+        return (
+            <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-[#003366]" />
+            </div>
+        );
+    }
     
     const renderContent = () => {
+        // ... (rest of the render logic)
         switch (pageState) {
             case 'loading':
                 return <div className="text-center py-20 text-lg font-semibold text-gray-600">Loading your information...</div>;
@@ -159,9 +221,14 @@ const SchemesPage: NextPage = () => {
             case 'displaying':
                 if (isAnalyzing) {
                     return (
-                        <div className="flex flex-col items-center justify-center h-64">
-                            <Loader2 className="h-12 w-12 animate-spin text-[#003366]" />
-                            <p className="mt-4 text-lg font-semibold text-gray-600">Analyzing your profile...</p>
+                        <div className="bg-white p-8 rounded-xl shadow-lg border">
+                            <div className="flex items-center justify-center mb-6">
+                                <Loader2 className="h-8 w-8 animate-spin text-[#003366]" />
+                                <h2 className="text-2xl font-bold text-[#003366] ml-4">Analyzing Your Profile...</h2>
+                            </div>
+                            <div className="text-center text-lg text-gray-600 h-8">
+                                <p>{analysisStatus}</p>
+                            </div>
                         </div>
                     );
                 }

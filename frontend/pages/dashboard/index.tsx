@@ -27,7 +27,7 @@ const DashboardPage: NextPage = () => {
             <p className="text-gray-700 text-lg leading-relaxed flex-1">
               You appear to be eligible for <strong className="text-2xl font-bold text-[#0055A4]">5</strong> key schemes. The top match is <em className="font-semibold">Pradhan Mantri Jeevan Jyoti Bima Yojana.</em>
             </p>
-            <button onClick={() => router.push('/schemes')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
+            <button onClick={() => router.push('/dashboard/schemes')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
               View All Schemes <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
@@ -41,7 +41,7 @@ const DashboardPage: NextPage = () => {
             <p className="text-gray-700 text-lg leading-relaxed flex-1">
               We project you can save <strong className="text-2xl font-bold text-green-700">₹15,200</strong> by switching to the New Tax Regime.
             </p>
-            <button onClick={() => router.push('/tax-advisory')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
+            <button onClick={() => router.push('/dashboard/tax')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
               Optimize My Tax <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
@@ -55,7 +55,7 @@ const DashboardPage: NextPage = () => {
             <p className="text-gray-700 text-lg leading-relaxed flex-1">
               Your current portfolio risk is <strong className="text-2xl font-bold text-yellow-800">'Medium'</strong>. We have suggestions to align it with your 'Growth' goals.
             </p>
-            <button onClick={() => router.push('/wealth-advisory')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
+            <button onClick={() => router.push('/dashboard/wealth')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
               Explore Investment Plans <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
             </button>
           </div>

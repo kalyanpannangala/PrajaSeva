@@ -3,15 +3,18 @@
 
 import { useState, useEffect, useRef, FC } from 'react';
 import type { NextPage } from 'next';
-import { Bot, User, Send, Loader2 } from 'lucide-react';
+import { Bot, User, Send, Loader2, Landmark, BarChart3, Zap } from 'lucide-react';
 import Header from '../../../components/Header'; // <-- Import the dedicated header
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 // --- Type definitions for chat messages ---
 interface Message {
   id: number;
   text: string;
   sender: 'user' | 'bot';
+  isToolRedirect?: boolean; // New property to identify special messages
+  toolPath?: string; // Path for the button to link to
 }
 
 const ChatbotPage: NextPage = () => {
@@ -21,6 +24,7 @@ const ChatbotPage: NextPage = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // --- Function to scroll to the latest message ---
   useEffect(() => {
@@ -33,19 +37,56 @@ const ChatbotPage: NextPage = () => {
 
     const userMessage: Message = { id: Date.now(), text: input, sender: 'user' };
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
 
-    // --- Simulate API call to your Gemini AI backend ---
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: Date.now() + 1,
-        text: `This is a simulated response based on your query: "${userMessage.text}". In a real application, this would be a dynamic answer from the Gemini API.`,
-        sender: 'bot'
-      };
-      setMessages(prev => [...prev, botResponse]);
-      setIsLoading(false);
-    }, 2000);
+    try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch('https://kalyanpannangala-prajaseva.hf.space/chat/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ question: currentInput })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get a response from the server.');
+        }
+
+        const data = await response.json();
+        let botResponse: Message = {
+            id: Date.now() + 1,
+            text: data.answer,
+            sender: 'bot',
+        };
+        
+        // --- NEW: Check for tool redirection phrases ---
+        if (data.answer.includes("Schemes Recommender tool")) {
+            botResponse.isToolRedirect = true;
+            botResponse.toolPath = '/schemes';
+        } else if (data.answer.includes("Tax Advisory tool")) {
+            botResponse.isToolRedirect = true;
+            botResponse.toolPath = '/tax-advisory';
+        } else if (data.answer.includes("Wealth Advisory tool")) {
+            botResponse.isToolRedirect = true;
+            botResponse.toolPath = '/wealth-advisory';
+        }
+
+        setMessages(prev => [...prev, botResponse]);
+
+    } catch (error) {
+        const errorMessage: Message = {
+            id: Date.now() + 1,
+            text: "Sorry, I'm having trouble connecting to my brain right now. Please try again later.",
+            sender: 'bot'
+        };
+        setMessages(prev => [...prev, errorMessage]);
+    } finally {
+        setIsLoading(false);
+    }
   };
   
   const handlePromptClick = (prompt: string) => {
@@ -85,6 +126,18 @@ const ChatbotPage: NextPage = () => {
                   )}
                   <div className={`max-w-lg p-4 rounded-2xl ${message.sender === 'user' ? 'bg-[#003366] text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'}`}>
                     <p>{message.text}</p>
+                    {/* --- NEW: Render a button for tool redirects --- */}
+                    {message.isToolRedirect && (
+                        <button 
+                            onClick={() => router.push(message.toolPath!)}
+                            className="mt-3 flex items-center bg-blue-100 text-blue-800 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors"
+                        >
+                            {message.text.includes("Schemes") && <Landmark className="w-5 h-5 mr-2" />}
+                            {message.text.includes("Tax") && <BarChart3 className="w-5 h-5 mr-2" />}
+                            {message.text.includes("Wealth") && <Zap className="w-5 h-5 mr-2" />}
+                            Go to Tool
+                        </button>
+                    )}
                   </div>
                    {message.sender === 'user' && (
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
