@@ -1,71 +1,171 @@
-// app/dashboard/page.tsx
+// pages/dashboard.tsx
 'use client';
 
+import { useState, useEffect, FC } from 'react';
 import type { NextPage } from 'next';
-import { useRouter } from 'next/navigation';
-import { Landmark, BarChart3, Zap, ArrowRight, BotMessageSquare } from 'lucide-react';
-import Header from '../../components/Header'; // <-- IMPORT THE DEDICATED HEADER
+import { useRouter } from 'next/router';
+import { Landmark, BarChart3, Zap, ArrowRight, BotMessageSquare, Loader2, AlertTriangle } from 'lucide-react';
+import Header from '../../components/Header';
+import FloatingChatbot from '../../components/FloatingChatbot';
+import { jwtDecode } from 'jwt-decode';
+
+// --- Type Definitions ---
+interface SchemesSummary {
+    total: number;
+    central: number;
+    state: number;
+}
+interface TaxSummary {
+    tax_saving: number;
+    recommended_regime: string;
+}
+interface WealthSummary {
+    projected_corpus: number;
+}
+interface DashboardData {
+    schemes: SchemesSummary | null;
+    tax: TaxSummary | null;
+    wealth: WealthSummary | null;
+}
+
+// --- Reusable Card Component ---
+const DashboardCard: FC<{
+    title: string;
+    icon: React.ReactNode;
+    data: any;
+    link: string;
+    linkText: string;
+    children: React.ReactNode;
+}> = ({ title, icon, data, link, linkText, children }) => {
+    const router = useRouter();
+    return (
+        <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 flex flex-col transform hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
+            <div className="flex items-center mb-4">
+                {icon}
+                <h2 className="text-xl font-bold text-[#003366]">{title}</h2>
+            </div>
+            <div className="text-gray-700 text-lg leading-relaxed flex-1">
+                {children}
+            </div>
+            {!data && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center text-center p-4">
+                    <p className="font-semibold text-gray-700 mb-2">No data yet.</p>
+                    <p className="text-sm text-gray-500 mb-4">Use the {title} tool to get personalized recommendations.</p>
+                    <button onClick={() => router.push(link)} className="bg-[#003366] text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                        {linkText}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const DashboardPage: NextPage = () => {
   const router = useRouter();
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (!token) { router.push('/auth'); return; }
+    try {
+        const decoded: { exp: number } = jwtDecode(token);
+        if (decoded.exp * 1000 < Date.now()) {
+            localStorage.removeItem('authToken');
+            router.push('/auth');
+            return;
+        }
+    } catch (e) {
+        localStorage.removeItem('authToken');
+        router.push('/auth');
+        return;
+    }
+
+    const fetchDashboardData = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/dashboard/summary', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Failed to load dashboard data.');
+            setDashboardData(await res.json());
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    fetchDashboardData();
+  }, [router]);
+
+  const renderContent = () => {
+    if (isLoading) {
+        return <div className="text-center py-20"><Loader2 className="h-12 w-12 mx-auto animate-spin text-[#003366]" /></div>;
+    }
+    if (error) {
+        return <div className="text-center py-20 text-red-600"><AlertTriangle className="h-12 w-12 mx-auto mb-4" /><p>{error}</p></div>;
+    }
+    if (!dashboardData) {
+        return <div className="text-center py-20 text-gray-600">Could not load dashboard information.</div>;
+    }
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <DashboardCard 
+                title="Government Schemes" 
+                icon={<div className="p-3 bg-blue-100 rounded-lg mr-4"><Landmark className="h-8 w-8 text-[#003366]" /></div>}
+                data={dashboardData.schemes}
+                link="/dashboard/schemes"
+                linkText="Find Schemes"
+            >
+                {dashboardData.schemes ? (
+                    <>
+                        You are eligible for <strong className="text-2xl font-bold text-[#0055A4]">{dashboardData.schemes.total}</strong> schemes.
+                        <div className="text-sm mt-2 space-y-1">
+                            <p><strong>{dashboardData.schemes.central}</strong> Central Government Schemes</p>
+                            <p><strong>{dashboardData.schemes.state}</strong> Andhra Pradesh Schemes</p>
+                        </div>
+                    </>
+                ) : <p>Use our AI recommender to find schemes you're eligible for.</p>}
+            </DashboardCard>
+
+            <DashboardCard 
+                title="Tax Advisory" 
+                icon={<div className="p-3 bg-green-100 rounded-lg mr-4"><BarChart3 className="h-8 w-8 text-green-800" /></div>}
+                data={dashboardData.tax}
+                link="/dashboard/tax"
+                linkText="Analyze Tax"
+            >
+                {dashboardData.tax ? (
+                    <p>We project you can save <strong className="text-2xl font-bold text-green-700">₹{Number(dashboardData.tax.tax_saving).toLocaleString('en-IN')}</strong> by switching to the {dashboardData.tax.recommended_regime}.</p>
+                ) : <p>Analyze your income to find the best tax-saving options.</p>}
+            </DashboardCard>
+
+            <DashboardCard 
+                title="Wealth Advisory" 
+                icon={<div className="p-3 bg-yellow-100 rounded-lg mr-4"><Zap className="h-8 w-8 text-yellow-800" /></div>}
+                data={dashboardData.wealth}
+                link="/dashboard/wealth"
+                linkText="Plan Wealth"
+            >
+                {dashboardData.wealth ? (
+                    <p>Your projected retirement corpus is <strong className="text-2xl font-bold text-yellow-800">₹{Number(dashboardData.wealth.projected_corpus).toLocaleString('en-IN')}</strong>.</p>
+                ) : <p>Get a personalized investment plan to grow your savings.</p>}
+            </DashboardCard>
+        </div>
+    );
+  };
 
   return (
     <div className="bg-[#F8F9FA] min-h-screen font-sans">
-      <Header /> {/* <-- USE THE HEADER COMPONENT HERE */}
-
-      {/* --- Main Content --- */}
+      <Header />
       <main className="p-6 md:p-8 lg:p-10">
         <h1 className="text-3xl font-bold text-[#003366] mb-6">Your Personal Dashboard</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* --- Govt. Schemes Card --- */}
-          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 flex flex-col transform hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center mb-4">
-              <div className="p-3 bg-blue-100 rounded-lg mr-4"><Landmark className="h-8 w-8 text-[#003366]" /></div>
-              <h2 className="text-xl font-bold text-[#003366]">Government Schemes</h2>
-            </div>
-            <p className="text-gray-700 text-lg leading-relaxed flex-1">
-              You appear to be eligible for <strong className="text-2xl font-bold text-[#0055A4]">5</strong> key schemes. The top match is <em className="font-semibold">Pradhan Mantri Jeevan Jyoti Bima Yojana.</em>
-            </p>
-            <button onClick={() => router.push('/dashboard/schemes')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
-              View All Schemes <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-
-          {/* --- Tax Advisory Card --- */}
-          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 flex flex-col transform hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center mb-4">
-              <div className="p-3 bg-green-100 rounded-lg mr-4"><BarChart3 className="h-8 w-8 text-green-800" /></div>
-              <h2 className="text-xl font-bold text-[#003366]">Tax Advisory</h2>
-            </div>
-            <p className="text-gray-700 text-lg leading-relaxed flex-1">
-              We project you can save <strong className="text-2xl font-bold text-green-700">₹15,200</strong> by switching to the New Tax Regime.
-            </p>
-            <button onClick={() => router.push('/dashboard/tax')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
-              Optimize My Tax <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-
-          {/* --- Wealth Advisory Card --- */}
-          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 flex flex-col transform hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-            <div className="flex items-center mb-4">
-              <div className="p-3 bg-yellow-100 rounded-lg mr-4"><Zap className="h-8 w-8 text-yellow-800" /></div>
-              <h2 className="text-xl font-bold text-[#003366]">Wealth Advisory</h2>
-            </div>
-            <p className="text-gray-700 text-lg leading-relaxed flex-1">
-              Your current portfolio risk is <strong className="text-2xl font-bold text-yellow-800">'Medium'</strong>. We have suggestions to align it with your 'Growth' goals.
-            </p>
-            <button onClick={() => router.push('/dashboard/wealth')} className="group mt-6 flex items-center justify-center w-full bg-[#003366] hover:bg-[#002244] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300">
-              Explore Investment Plans <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
+        {renderContent()}
       </main>
-
-      {/* --- Floating AI Chatbot Button --- */}
-      <button onClick={() => router.push('/chatbot')} className="fixed bottom-8 right-8 bg-gradient-to-r from-[#003366] to-[#0055A4] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300">
-        <BotMessageSquare className="h-8 w-8" />
-      </button>
+      <FloatingChatbot />
     </div>
   );
 };

@@ -1,24 +1,51 @@
-# api.py
-from fastapi import FastAPI
+# wealth_model/api.py
+import os
+import json
+from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
+from pathlib import Path
 import joblib
 import pandas as pd
-from pathlib import Path
-from typing import List, Tuple
+import psycopg2
+from psycopg2.extras import DictCursor
+from jose import JWTError, jwt
+from dotenv import load_dotenv
+from fastapi.security import OAuth2PasswordBearer
+from typing import List
 
+# --- Environment Setup & App Initialization ---
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
+JWT_SECRET = os.getenv("JWT_SECRET")
+ALGORITHM = "HS256"
 app = FastAPI(title="Wealth & Investment Recommendation API")
 
-# --------- Load ML Model ---------
-# Locates the model file relative to the api.py script
-base_dir = Path(__file__).resolve().parent
-try:
-    pipeline = joblib.load(base_dir / "investment_model.pkl")
-except Exception as e:
-    pipeline = None
-    print(f"⚠️ Could not load ML model: {e}")
+# --- Security & Authentication ---
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+        user_id: str = payload.get("userId")
+        if user_id is None: raise credentials_exception
+        return user_id
+    except JWTError:
+        raise credentials_exception
 
-# --------- Request & Response Schemas ---------
-class WealthRequest(BaseModel):
+# --- Database Connection ---
+def get_db_connection():
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Database connection failed.")
+
+# --- Load ML Model ---
+base_dir = Path(__file__).resolve().parent
+pipeline = joblib.load(base_dir / "investment_model.pkl") if (base_dir / "investment_model.pkl").exists() else None
+
+# --- Pydantic Schemas ---
+class WealthInput(BaseModel):
     user_age: int
     retirement_age: int
     current_savings: float
@@ -28,109 +55,75 @@ class WealthRequest(BaseModel):
     liquidity: str
     annual_step_up: float
 
-class ProjectionRow(BaseModel):
-    year: int
-    # Changed from float to str for comma formatting
-    opening_capital: str
-    annual_investment: str
-    interest_earned: str
-    closing_capital: str
+# --- API Endpoint ---
+@app.post("/predict")
+def predict_wealth(user_id: str = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=DictCursor)
+    try:
+        # 1. Fetch user input from 'wealth_input' table
+        cursor.execute("SELECT * FROM wealth_input WHERE user_id = %s", (user_id,))
+        user_input_data = cursor.fetchone()
+        if not user_input_data:
+            raise HTTPException(status_code=404, detail="No wealth input data found for this user.")
+        data = WealthInput(**user_input_data)
 
-class SchemeRecommendation(BaseModel):
-    scheme_name: str
-    confidence: float # e.g., 0.95 for 95%
+        # 2. Wealth Projection Calculation
+        years_to_invest = data.retirement_age - data.user_age
+        annual_investment = data.monthly_investment * 12
+        corpus = data.current_savings
+        inflation_rate = 4.0
+        projection_data = []
 
-class WealthResponse(BaseModel):
-    # Changed from float to str for comma formatting
-    projected_corpus: str
-    inflation_adjusted_corpus: str
-    projection_data: List[ProjectionRow]
-    recommended_schemes: List[SchemeRecommendation]
+        if years_to_invest > 0:
+            for year in range(1, years_to_invest + 1):
+                opening_cap = corpus
+                annual_inv = annual_investment
+                interest_earned = corpus * (data.expected_return / 100)
+                corpus += interest_earned + annual_inv
+                projection_data.append({
+                    "year": year, "opening_capital": f"{opening_cap:,.2f}",
+                    "annual_investment": f"{annual_inv:,.2f}", "interest_earned": f"{interest_earned:,.2f}",
+                    "closing_capital": f"{corpus:,.2f}"
+                })
+                annual_investment *= (1 + data.annual_step_up / 100)
+        
+        inflation_adjusted_corpus = corpus / ((1 + inflation_rate / 100) ** years_to_invest) if years_to_invest > 0 else corpus
+        projected_corpus_final = corpus
 
+        # 3. ML Model Prediction
+        recommended_schemes = []
+        if pipeline:
+            input_df = pd.DataFrame([{"user_age": data.user_age, "investment_amount": data.monthly_investment * 12, "years_to_invest": years_to_invest, "risk_level": data.risk_tolerance, "liquidity": data.liquidity}])
+            all_probs = pipeline.predict_proba(input_df)[0]
+            top_indices = all_probs.argsort()[-5:][::-1] # Get top 5
+            for i in top_indices:
+                recommended_schemes.append({"scheme_name": pipeline.classes_[i], "confidence": round(all_probs[i], 4)})
 
-# --------- API Endpoint ---------
-@app.post("/predict", response_model=WealthResponse)
-def predict_wealth(data: WealthRequest):
-    # --- Step 1: Wealth Projection Calculation ---
-    years_to_invest = data.retirement_age - data.user_age
-    annual_investment = data.monthly_investment * 12
-    corpus = data.current_savings
-    inflation_rate = 4.0  # Using a more realistic inflation rate
+        # 4. Store results in 'wealth' table using UPSERT
+        upsert_query = """
+            INSERT INTO wealth (user_id, projected_corpus, inflation_adjusted_corpus, projection_data, recommended_schemes, generated_at)
+            VALUES (%s, %s, %s, %s, %s, NOW())
+            ON CONFLICT (user_id) DO UPDATE SET
+                projected_corpus = EXCLUDED.projected_corpus,
+                inflation_adjusted_corpus = EXCLUDED.inflation_adjusted_corpus,
+                projection_data = EXCLUDED.projection_data,
+                recommended_schemes = EXCLUDED.recommended_schemes,
+                generated_at = NOW();
+        """
+        cursor.execute(upsert_query, (user_id, projected_corpus_final, inflation_adjusted_corpus, json.dumps(projection_data), json.dumps(recommended_schemes)))
+        conn.commit()
 
-    projection_data = []
-
-    # Ensure years_to_invest is not negative
-    if years_to_invest > 0:
-        for year in range(1, years_to_invest + 1):
-            opening_cap_float = corpus
-            annual_inv_float = annual_investment
-            interest_earned_float = corpus * (data.expected_return / 100)
-            
-            corpus += interest_earned_float + annual_inv_float
-            
-            projection_data.append(ProjectionRow(
-                year=year,
-                # Format numbers as comma-separated strings
-                opening_capital=f"{opening_cap_float:,.2f}",
-                annual_investment=f"{annual_inv_float:,.2f}",
-                interest_earned=f"{interest_earned_float:,.2f}",
-                closing_capital=f"{corpus:,.2f}"
-            ))
-            # Apply annual step-up for the next year's investment
-            annual_investment *= (1 + data.annual_step_up / 100)
-
-    inflation_adjusted_corpus = corpus / ((1 + inflation_rate / 100) ** years_to_invest) if years_to_invest > 0 else corpus
-
-    # --- Step 2: ML Model Prediction (Updated Logic) ---
-    recommended_schemes = []
-    if pipeline:
-        try:
-            input_data = pd.DataFrame([{
-                "user_age": data.user_age,
-                "investment_amount": data.monthly_investment * 12,
-                "years_to_invest": years_to_invest,
-                "risk_level": data.risk_tolerance,
-                "liquidity": data.liquidity
-            }])
-
-            # Get probabilities for all schemes
-            all_probabilities = pipeline.predict_proba(input_data)[0]
-            all_scheme_labels = pipeline.classes_
-
-            # Pair schemes with probabilities
-            scheme_recommendations_with_prob = []
-            for i, scheme_name in enumerate(all_scheme_labels):
-                probability = all_probabilities[i]
-                scheme_recommendations_with_prob.append((scheme_name, probability))
-            
-            # Sort by probability (highest first)
-            scheme_recommendations_with_prob.sort(key=lambda x: x[1], reverse=True)
-
-            # Get the top N recommendations
-            top_n = 5
-            top_schemes = scheme_recommendations_with_prob[:top_n]
-
-            # Format for the response model
-            for scheme, prob in top_schemes:
-                recommended_schemes.append(SchemeRecommendation(
-                    scheme_name=scheme,
-                    confidence=round(prob, 4)
-                ))
-
-        except Exception as e:
-            print(f"Prediction error: {e}")
-
-
-    # --- Step 3: Return the final response ---
-    return WealthResponse(
-        # Format final numbers as comma-separated strings
-        projected_corpus=f"{corpus:,.2f}",
-        inflation_adjusted_corpus=f"{inflation_adjusted_corpus:,.2f}",
-        projection_data=projection_data,
-        recommended_schemes=recommended_schemes
-    )
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        # 5. Return the final response
+        return {
+            "projected_corpus": f"{projected_corpus_final:,.2f}",
+            "inflation_adjusted_corpus": f"{inflation_adjusted_corpus:,.2f}",
+            "projection_data": projection_data,
+            "recommended_schemes": recommended_schemes
+        }
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+    finally:
+        cursor.close()
+        conn.close()

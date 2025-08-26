@@ -222,9 +222,7 @@ const ProfilePage: NextPage = () => {
         {successMessage && <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg text-center">{successMessage}</div>}
         {renderContent()}
       </main>
-      <button className="fixed bottom-8 right-8 bg-gradient-to-r from-[#003366] to-[#0055A4] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300">
-        <BotMessageSquare className="h-8 w-8" />
-      </button>
+      
     </div>
   );
 };

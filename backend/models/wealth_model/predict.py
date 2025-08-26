@@ -87,7 +87,7 @@ try:
     top_schemes = scheme_recommendations[:top_n]
 
     if top_schemes:
-        print("\n🎯 Based on your profile, here are your top 5 recommended investment schemes:")
+        print("\n🎯 Based on your profile, here are your top recommended investment schemes:")
         for i, (scheme, prob) in enumerate(top_schemes):
             print(f" {i+1}. {scheme} (Confidence: {prob:.0%})")
     else:

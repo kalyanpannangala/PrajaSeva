@@ -1,5 +1,6 @@
 # tax_model/api.py
 import os
+import json
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 from pathlib import Path
@@ -60,26 +61,45 @@ class TaxInput(BaseModel):
     donations_80g: float
     other_deductions: float
 
-# --- Helper Functions ---
+# -------- Helper Functions --------
 def calc_old_regime_tax(taxable):
+    # This function was correct and remains unchanged.
     tax = 0
-    if taxable <= 250000: tax = 0
-    elif taxable <= 500000: tax = 0.05 * (taxable - 250000)
-    elif taxable <= 1000000: tax = 12500 + 0.2 * (taxable - 500000)
-    else: tax = 112500 + 0.3 * (taxable - 1000000)
-    return tax * 1.04
+    if taxable <= 250000:
+        tax = 0
+    elif taxable <= 500000:
+        tax = 0.05 * (taxable - 250000)
+    elif taxable <= 1000000:
+        tax = 12500 + 0.2 * (taxable - 500000)
+    else:
+        tax = 112500 + 0.3 * (taxable - 1000000)
+    return tax * 1.04  # Add 4% cess
 
-def calc_new_regime_tax(taxable):
-    slabs = [300000, 600000, 900000, 1200000, 1500000]
-    rates = [0.00, 0.05, 0.10, 0.15, 0.20, 0.30]
-    prev_limit, tax = 0, 0
-    for i, limit in enumerate(slabs):
-        if taxable > limit:
-            tax += (limit - prev_limit) * rates[i]
-            prev_limit = limit
-        else:
-            tax += (taxable - prev_limit) * rates[i]
-            break
+# --- FIX: Corrected New Regime Tax Calculation ---
+# This new function correctly handles all income slabs.
+def calc_new_regime_tax(taxable_income):
+    tax = 0
+    # Tax on income > 15,00,000
+    if taxable_income > 1500000:
+        tax += (taxable_income - 1500000) * 0.30
+    
+    # Tax on income between 12,00,001 and 15,00,000
+    if taxable_income > 1200000:
+        tax += (min(taxable_income, 1500000) - 1200000) * 0.20
+        
+    # Tax on income between 9,00,001 and 12,00,000
+    if taxable_income > 900000:
+        tax += (min(taxable_income, 1200000) - 900000) * 0.15
+        
+    # Tax on income between 6,00,001 and 9,00,000
+    if taxable_income > 600000:
+        tax += (min(taxable_income, 900000) - 600000) * 0.10
+        
+    # Tax on income between 3,00,001 and 6,00,000
+    if taxable_income > 300000:
+        tax += (min(taxable_income, 600000) - 300000) * 0.05
+        
+    # Add 4% cess
     return tax * 1.04
 
 # --- API Endpoint ---
@@ -88,7 +108,6 @@ def predict_tax(user_id: str = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=DictCursor)
     try:
-        # 1. Fetch user input data from the 'tax_input' table
         cursor.execute("SELECT * FROM tax_input WHERE user_id = %s ORDER BY created_at DESC LIMIT 1", (user_id,))
         user_input_data = cursor.fetchone()
         if not user_input_data:
@@ -96,7 +115,6 @@ def predict_tax(user_id: str = Depends(get_current_user)):
 
         data = TaxInput(**user_input_data)
 
-        # 2. Perform Calculation
         std_deduction_old = 50000
         std_deduction_new = 75000 if data.is_salaried else 0
         taxable_old = data.annual_income - std_deduction_old - min(data.investment_80c, 150000) - min(data.investment_80d, 50000) - min(data.home_loan_interest, 200000) - data.education_loan_interest - data.donations_80g - data.other_deductions
@@ -107,24 +125,43 @@ def predict_tax(user_id: str = Depends(get_current_user)):
         tax_new = calc_new_regime_tax(taxable_new)
         recommended = "Old Regime" if tax_old < tax_new else "New Regime"
         tax_saving = abs(tax_old - tax_new)
+        
+        notes = [
+            "Section 80E (education loan interest) is applied to the Old Regime only.",
+            f"Standard deductions used: Old Regime ₹{std_deduction_old:,}; New Regime {'₹'+str(std_deduction_new) if std_deduction_new else '₹0'}.",
+            "Caps: 80C ₹1,50,000; 80D ₹50,000; Home loan interest ₹2,00,000.",
+            "Cess 4% added on tax."
+        ]
 
-        # 3. Store the output in the 'tax' table
         upsert_query = """
-            INSERT INTO tax (user_id, taxable_income_old, tax_old, taxable_income_new, tax_new, recommended_regime, tax_saving, generated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+            INSERT INTO tax (user_id, taxable_income_old, tax_old, taxable_income_new, tax_new, recommended_regime, tax_saving, notes, generated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
             ON CONFLICT (user_id) DO UPDATE SET
                 taxable_income_old = EXCLUDED.taxable_income_old, tax_old = EXCLUDED.tax_old,
                 taxable_income_new = EXCLUDED.taxable_income_new, tax_new = EXCLUDED.tax_new,
                 recommended_regime = EXCLUDED.recommended_regime, tax_saving = EXCLUDED.tax_saving,
-                generated_at = NOW();
+                notes = EXCLUDED.notes, generated_at = NOW();
         """
-        cursor.execute(upsert_query, (user_id, taxable_old, tax_old, taxable_new, tax_new, recommended, tax_saving))
+        cursor.execute(upsert_query, (user_id, taxable_old, tax_old, taxable_new, tax_new, recommended, tax_saving, json.dumps(notes)))
         conn.commit()
 
-        # 4. Return the response
+        ml_recommendation = "Not available"
+        if ml_model:
+            standard_deduction = 50000 if data.is_salaried else 0
+            input_data = pd.DataFrame([[data.age, data.annual_income, int(data.is_salaried), data.investment_80c, data.investment_80d, data.home_loan_interest, data.education_loan_interest, data.donations_80g, data.other_deductions, standard_deduction]], columns=feature_columns)
+            ml_prediction = ml_model.predict(input_data)[0]
+            ml_recommendation = "Old Regime" if int(ml_prediction) == 1 else "New Regime"
+
         return {
-            "calculation_summary": {"tax_old": round(tax_old, 2), "tax_new": round(tax_new, 2)},
-            "recommendation": {"deterministic": recommended, "tax_saving": round(tax_saving, 2)}
+            "calculation_summary": {
+                "taxable_income_old": taxable_old, "tax_old": round(tax_old, 2),
+                "taxable_income_new": taxable_new, "tax_new": round(tax_new, 2),
+            },
+            "recommendation": {
+                "deterministic": recommended, "ml_recommendation": ml_recommendation,
+                "tax_saving": round(tax_saving, 2)
+            },
+            "notes": notes
         }
     except Exception as e:
         conn.rollback()

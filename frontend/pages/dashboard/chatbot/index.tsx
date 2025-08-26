@@ -100,11 +100,12 @@ const ChatbotPage: NextPage = () => {
   ];
 
   return (
-    <div className="bg-[#F8F9FA] min-h-screen font-sans flex flex-col">
+    <div className="bg-[#F8F9FA] h-screen font-sans flex flex-col">
       <Header />
 
       {/* --- Main Chat Content --- */}
-      <main className="flex-1 flex flex-col p-6 md:p-8 lg:p-10">
+      {/* --- FIX: Reduced padding for a more edge-to-edge feel --- */}
+      <main className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         <div className="bg-white flex-1 flex flex-col rounded-xl shadow-2xl border border-gray-200/80 overflow-hidden">
           {/* --- Message Display Area --- */}
           <div className="flex-1 p-6 space-y-6 overflow-y-auto">
@@ -166,8 +167,8 @@ const ChatbotPage: NextPage = () => {
             <div ref={chatEndRef} />
           </div>
 
-          {/* --- Input Area --- */}
-          <div className="p-4 bg-gray-50 border-t border-gray-200">
+          {/* --- Input Area (add flex-shrink-0) --- */}
+          <div className="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
             {messages.length <= 1 && (
                 <div className="mb-3 flex flex-wrap gap-2">
                     {suggestedPrompts.map(prompt => (

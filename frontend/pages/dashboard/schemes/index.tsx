@@ -11,6 +11,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { jwtDecode } from 'jwt-decode'; // <-- Import the JWT decode library
+import FloatingChatbot from '../../../components/FloatingChatbot';
 
 // --- Type Definitions ---
 interface Scheme {
@@ -299,6 +300,8 @@ const SchemesPage: NextPage = () => {
                 {renderContent()}
             </main>
             <BotMessageSquare className="fixed bottom-8 right-8 h-16 w-16" />
+
+            <FloatingChatbot />
         </div>
     );
 };

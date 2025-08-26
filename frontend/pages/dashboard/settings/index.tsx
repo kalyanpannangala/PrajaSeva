@@ -166,10 +166,6 @@ const SettingsPage: NextPage = () => {
 
         </div>
       </main>
-
-      <button className="fixed bottom-8 right-8 bg-gradient-to-r from-[#003366] to-[#0055A4] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300">
-        <BotMessageSquare className="h-8 w-8" />
-      </button>
     </div>
   );
 };
