@@ -72,7 +72,7 @@ const Header: FC = () => {
         <header className="h-20 bg-white border-b border-gray-200/80 flex items-center justify-between px-6 sticky top-0 z-40">
             <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push('/dashboard')}>
-                    <img src="/PS-Logo.png" alt="PrajaSeva Logo" className="h-12" />
+                    <img src="/PS-Logo-Bg.png" alt="PrajaSeva Logo" className="h-12" />
                 </div>
                 <nav className="hidden md:flex items-center space-x-6">
                     {navLinks.map(link => (

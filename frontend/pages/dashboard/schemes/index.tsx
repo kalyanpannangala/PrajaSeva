@@ -3,6 +3,7 @@
 
 import { useState, useEffect, FC } from 'react';
 import type { NextPage } from 'next';
+import FloatingChatbot from '../../../components/FloatingChatbot';
 import Header from '../../../components/Header';
 import { 
   Landmark, AlertTriangle, BotMessageSquare, 
@@ -10,8 +11,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { jwtDecode } from 'jwt-decode'; // <-- Import the JWT decode library
-import FloatingChatbot from '../../../components/FloatingChatbot';
+import { jwtDecode } from 'jwt-decode';
 
 // --- Type Definitions ---
 interface Scheme {
@@ -39,7 +39,7 @@ const ProfileSnapshot: FC<{ profile: Partial<UserProfile>; onAnalyze: () => void
         { label: 'Disability', value: profile.disability_status ? 'Yes' : 'No' },
     ];
     return (
-        <div className="mb-8 p-4 rounded-xl">
+        <div className="mb-10">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-[#003366]">Your Profile Snapshot</h2>
                 <Link href="/profile" className="flex items-center text-sm font-medium text-[#0055A4] hover:text-[#003366]">
@@ -47,16 +47,16 @@ const ProfileSnapshot: FC<{ profile: Partial<UserProfile>; onAnalyze: () => void
                     Edit Full Profile
                 </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 border-t border-b border-gray-200 py-4">
                 {profileItems.map(item => (
                     <div key={item.label}>
                         <p className="text-sm text-gray-500">{item.label}</p>
-                        <p className="text-base font-semibold text-[#003366] truncate">{item.value}</p>
+                        <p className="text-base font-bold text-[#003366] truncate">{item.value}</p>
                     </div>
                 ))}
             </div>
             {hasResults && (
-                <button onClick={onAnalyze} disabled={isLoading} className="mt-6 w-full md:w-auto flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:bg-gray-400">
+                <button onClick={onAnalyze} disabled={isLoading} className="mt-4 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:bg-gray-400">
                     <RefreshCw className={`mr-2 h-5 w-5 ${isLoading ? 'animate-spin' : ''}`} />
                     {isLoading ? 'Analyzing...' : 'Re-analyze'}
                 </button>
@@ -74,7 +74,7 @@ const SchemesPage: NextPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [analysisStatus, setAnalysisStatus] = useState('');
     const router = useRouter();
-    const [isVerifyingAuth, setIsVerifyingAuth] = useState(true); // <-- New state for auth check
+    const [isVerifyingAuth, setIsVerifyingAuth] = useState(true);
 
     const startAnalysis = async () => {
         const token = localStorage.getItem('authToken');
@@ -86,7 +86,7 @@ const SchemesPage: NextPage = () => {
 
         setIsAnalyzing(true);
         setError(null);
-        setSchemes([]); // Clear old schemes before starting
+        setSchemes([]);
 
         try {
             const response = await fetch("https://kalyanpannangala-prajaseva.hf.space/schemes/predict", {
@@ -148,7 +148,6 @@ const SchemesPage: NextPage = () => {
     }, [isAnalyzing]);
 
     useEffect(() => {
-        // --- NEW: Authentication Check ---
         const token = localStorage.getItem('authToken');
         if (!token) {
             router.push('/auth');
@@ -158,21 +157,18 @@ const SchemesPage: NextPage = () => {
         try {
             const decodedToken: { exp: number } = jwtDecode(token);
             if (decodedToken.exp * 1000 < Date.now()) {
-                // Token is expired
                 localStorage.removeItem('authToken');
                 router.push('/auth');
                 return;
             }
         } catch (error) {
-            // Invalid token
             localStorage.removeItem('authToken');
             router.push('/auth');
             return;
         }
         
-        setIsVerifyingAuth(false); // Auth check passed
+        setIsVerifyingAuth(false);
 
-        // --- Fetch initial data ---
         const fetchInitialData = async () => {
             setPageState('loading');
             try {
@@ -203,7 +199,6 @@ const SchemesPage: NextPage = () => {
         fetchInitialData();
     }, [router]);
     
-    // --- Show a loading screen while verifying auth ---
     if (isVerifyingAuth) {
         return (
             <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center">
@@ -213,7 +208,6 @@ const SchemesPage: NextPage = () => {
     }
     
     const renderContent = () => {
-        // ... (rest of the render logic)
         switch (pageState) {
             case 'loading':
                 return <div className="text-center py-20 text-lg font-semibold text-gray-600">Loading your information...</div>;
@@ -243,7 +237,7 @@ const SchemesPage: NextPage = () => {
                 });
 
                 return sortedSchemes.length > 0 ? (
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         {sortedSchemes.map((scheme) => {
                             let logoSrc = '';
                             if (scheme.scheme_id.startsWith('C')) {
@@ -253,18 +247,21 @@ const SchemesPage: NextPage = () => {
                             }
 
                             return (
-                                <div key={scheme.scheme_id} className="bg-white p-6 rounded-xl shadow-lg border flex items-center space-x-6">
-                                    <div className="p-2 bg-white rounded-lg border border-gray-200 flex-shrink-0">
-                                        {logoSrc ? (
-                                            <img src={logoSrc} alt="Scheme Logo" className="h-10 w-10 object-contain" />
-                                        ) : (
-                                            <Landmark className="h-10 w-10 text-gray-400" />
-                                        )}
+                                // --- FIX: Responsive layout for scheme cards ---
+                                <div key={scheme.scheme_id} className="bg-white p-4 rounded-xl shadow-lg border flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="flex items-center flex-1 mb-4 sm:mb-0">
+                                        <div className="p-2 bg-white rounded-lg border border-gray-200 flex-shrink-0">
+                                            {logoSrc ? (
+                                                <img src={logoSrc} alt="Scheme Logo" className="h-10 w-10 object-contain" />
+                                            ) : (
+                                                <Landmark className="h-10 w-10 text-gray-400" />
+                                            )}
+                                        </div>
+                                        <div className="ml-4">
+                                            <h3 className="text-lg font-bold text-[#003366]">{scheme.scheme_name}</h3>
+                                        </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-[#003366]">{scheme.scheme_name}</h3>
-                                    </div>
-                                    <button className="bg-[#D4AF37] hover:bg-[#b89b31] text-white font-semibold py-2 px-5 rounded-lg">View Details</button>
+                                    <button className="bg-[#D4AF37] hover:bg-[#b89b31] text-white font-semibold py-2 px-5 rounded-lg w-full sm:w-auto">View Details</button>
                                 </div>
                             );
                         })}
@@ -285,8 +282,8 @@ const SchemesPage: NextPage = () => {
     return (
         <div className="bg-[#F8F9FA] min-h-screen font-sans">
             <Header />
-            <main className="p-6 md:p-8 lg:p-10">
-                <h1 className="text-4xl font-extrabold text-[#003366] mb-8">Eligible Government Schemes</h1>
+            <main className="p-4 sm:p-6 md:p-8 lg:p-10 max-w-7xl mx-auto">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#003366] mb-8">Eligible Government Schemes</h1>
                 
                 {pageState !== 'loading' && pageState !== 'error' && (
                     <ProfileSnapshot 
@@ -299,8 +296,6 @@ const SchemesPage: NextPage = () => {
 
                 {renderContent()}
             </main>
-            <BotMessageSquare className="fixed bottom-8 right-8 h-16 w-16" />
-
             <FloatingChatbot />
         </div>
     );

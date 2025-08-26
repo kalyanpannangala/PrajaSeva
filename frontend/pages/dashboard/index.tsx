@@ -40,7 +40,11 @@ const DashboardCard: FC<{
 }> = ({ title, icon, data, link, linkText, children }) => {
     const router = useRouter();
     return (
-        <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 flex flex-col transform hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
+        // --- FIX: Added onClick handler and cursor-pointer to make the whole card clickable ---
+        <div 
+            onClick={() => router.push(link)}
+            className="bg-white p-8 rounded-xl shadow-lg border border-gray-200/80 flex flex-col transform hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative cursor-pointer"
+        >
             <div className="flex items-center mb-4">
                 {icon}
                 <h2 className="text-xl font-bold text-[#003366]">{title}</h2>
@@ -52,9 +56,10 @@ const DashboardCard: FC<{
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center text-center p-4">
                     <p className="font-semibold text-gray-700 mb-2">No data yet.</p>
                     <p className="text-sm text-gray-500 mb-4">Use the {title} tool to get personalized recommendations.</p>
-                    <button onClick={() => router.push(link)} className="bg-[#003366] text-white font-semibold py-2 px-4 rounded-lg text-sm">
+                    {/* This button is now primarily for visual cue; the whole card is clickable */}
+                    <div className="bg-[#003366] text-white font-semibold py-2 px-4 rounded-lg text-sm">
                         {linkText}
-                    </button>
+                    </div>
                 </div>
             )}
         </div>
