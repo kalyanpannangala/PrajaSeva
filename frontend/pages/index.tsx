@@ -136,9 +136,9 @@ const PrajaSevaClassicLandingPage: NextPage = () => {
               <MessageCircleQuestion className="h-16 w-16 mx-auto mb-4 opacity-80" />
               <h3 className="text-3xl font-bold mb-2">Questions? PrajaSeva AI is here to help.</h3>
               <p className="text-lg text-gray-200 max-w-2xl mx-auto mb-6">Our integrated AI assistant is ready to provide instant answers and guide you through the platform's features.</p>
-              <button className="bg-white text-[#003366] font-bold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+              <Link href="/auth" className="bg-white text-[#003366] font-bold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
                 Ask a Question
-              </button>
+              </Link>
             </div>
           </div>
         </section>

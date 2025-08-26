@@ -78,7 +78,7 @@ const PrivacyPolicyPage: NextPage = () => {
 
             <h2 className="text-2xl font-bold text-[#003366] mt-8">9. Contact Us</h2>
             <p>If you have questions or comments about this policy, you may contact us at:</p>
-            <p><strong>PrajaSeva Support</strong><br/>Email: privacy@prajaseva.gov.in (example email)</p>
+            <p><strong>PrajaSeva Support</strong><br/>Email: prajaseva.ai@gmail.com</p>
           </div>
         </div>
       </main>

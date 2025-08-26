@@ -42,7 +42,7 @@ const ContactUsPage: NextPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
                     <Mail className="h-6 w-6 text-[#003366]" />
-                    <span className="text-lg text-gray-700">support@prajaseva.gov.in</span>
+                    <span className="text-lg text-gray-700">prajaseva.ai@gmail.com</span>
                   </div>
                   <div className="flex items-center space-x-4">
                     <Phone className="h-6 w-6 text-[#003366]" />

@@ -61,7 +61,7 @@ const TermsAndConditionsPage: NextPage = () => {
 
             <h2 className="text-2xl font-bold text-[#003366] mt-8">10. Contact Us</h2>
             <p>If you have any questions about these Terms, please contact us at:</p>
-            <p><strong>PrajaSeva Support</strong><br/>Email: support@prajaseva.gov.in (example email)</p>
+            <p><strong>PrajaSeva Support</strong><br/>Email: prajaseva.ai@gmail.com</p>
           </div>
         </div>
       </main>

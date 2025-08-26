@@ -89,7 +89,7 @@ const DynamicProfileSetup: NextPage = () => {
   return (
     <div className="bg-[#F8FAFA] min-h-screen font-sans">
       <header className="fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-lg border-b border-gray-200/80 flex items-center justify-between px-6 z-50">
-        <img src="/PS-Logo.png" alt="PrajaSeva Logo" className="h-12" />
+        <img src="/PS-Logo-Bg.png" alt="PrajaSeva Logo" className="h-12" />
         <button onClick={() => router.push('/dashboard')} className="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors">
             <X className="h-6 w-6" />
             <span className="font-semibold">Exit</span>

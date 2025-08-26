@@ -42,9 +42,9 @@ const ProfileSnapshot: FC<{ profile: Partial<UserProfile>; onAnalyze: () => void
         <div className="mb-10">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-[#003366]">Your Profile Snapshot</h2>
-                <Link href="/profile" className="flex items-center text-sm font-medium text-[#0055A4] hover:text-[#003366]">
+                <Link href="/dashboard/profile" className="flex items-center text-sm font-medium text-[#0055A4] hover:text-[#003366]">
                     <Edit className="w-4 h-4 mr-1" />
-                    Edit Full Profile
+                    Edit
                 </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 border-t border-b border-gray-200 py-4">
@@ -241,7 +241,7 @@ const SchemesPage: NextPage = () => {
                         {sortedSchemes.map((scheme) => {
                             let logoSrc = '';
                             if (scheme.scheme_id.startsWith('C')) {
-                                logoSrc = '/GOI-logo.png';
+                                logoSrc = '/goi-logo.png';
                             } else if (scheme.scheme_id.startsWith('AP')) {
                                 logoSrc = '/ap-logo.png';
                             }

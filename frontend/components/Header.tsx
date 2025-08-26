@@ -115,8 +115,8 @@ const Header: FC = () => {
                                     <p className="text-sm text-gray-500">Welcome back!</p>
                                 </div>
                                 <div className="py-2">
-                                    <a href="/profile" className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"><User className="mr-3 h-5 w-5"/> My Profile</a>
-                                    <a href="/settings" className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"><Settings className="mr-3 h-5 w-5"/> Settings</a>
+                                    <a href="/dashboard/profile" className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"><User className="mr-3 h-5 w-5"/> My Profile</a>
+                                    <a href="/dashboard/settings" className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"><Settings className="mr-3 h-5 w-5"/> Settings</a>
                                     <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 text-red-500 hover:bg-red-50 mt-1 border-t"><LogOut className="mr-3 h-5 w-5"/> Logout</button>
                                 </div>
                             </motion.div>
