@@ -103,7 +103,7 @@ const UnifiedAuthPage: NextPage = () => {
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-2xl border border-gray-200/80">
         
         <div className="text-center">
-          <img src="/PS-Logo.png" alt="PrajaSeva Logo" className="h-16 mx-auto mb-4" />
+          <img src="/PS-Logo-Bg.png" alt="PrajaSeva Logo" className="h-12 mx-auto mb-6" />
           <h1 className="text-3xl font-bold text-[#003366]">{getTitle()}</h1>
         </div>
 

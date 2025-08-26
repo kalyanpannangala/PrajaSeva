@@ -247,7 +247,7 @@ const SchemesPage: NextPage = () => {
                         {sortedSchemes.map((scheme) => {
                             let logoSrc = '';
                             if (scheme.scheme_id.startsWith('C')) {
-                                logoSrc = '/GOI-logo.jpg';
+                                logoSrc = '/GOI-logo.png';
                             } else if (scheme.scheme_id.startsWith('AP')) {
                                 logoSrc = '/ap-logo.png';
                             }

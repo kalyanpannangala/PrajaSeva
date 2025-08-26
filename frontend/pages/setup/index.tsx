@@ -1,11 +1,11 @@
-// app/setup/page.tsx
+// pages/setup.tsx
 'use client'; 
 
 import { useState } from 'react';
 import type { NextPage } from 'next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, X, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 // --- Define the shape of our form data for TypeScript ---
 type FormData = {
@@ -55,13 +55,13 @@ const DynamicProfileSetup: NextPage = () => {
     if (!token) {
         setError('Authentication error. Please log in again.');
         setIsLoading(false);
-        // Optional: redirect to login after a delay
         setTimeout(() => router.push('/auth'), 2000);
         return;
     }
 
     try {
-        const response = await fetch('https://prajaseva-ai.vercel.app/api/user/setup', {
+        // --- FIX: Use a relative URL for the API call ---
+        const response = await fetch('/api/user/setup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -75,7 +75,6 @@ const DynamicProfileSetup: NextPage = () => {
             throw new Error(data.message || 'Failed to save profile.');
         }
 
-        // --- SUCCESS ---
         router.push('/dashboard');
 
     } catch (err: any) {
@@ -90,7 +89,7 @@ const DynamicProfileSetup: NextPage = () => {
   return (
     <div className="bg-[#F8FAFA] min-h-screen font-sans">
       <header className="fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-lg border-b border-gray-200/80 flex items-center justify-between px-6 z-50">
-        <img src="/PS-Logo-Bg.png" alt="PrajaSeva Logo" className="h-12" />
+        <img src="/PS-Logo.png" alt="PrajaSeva Logo" className="h-12" />
         <button onClick={() => router.push('/dashboard')} className="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors">
             <X className="h-6 w-6" />
             <span className="font-semibold">Exit</span>

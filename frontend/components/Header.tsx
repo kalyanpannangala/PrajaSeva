@@ -63,9 +63,9 @@ const Header: FC = () => {
     
     const navLinks = [
         { href: '/dashboard', label: 'Dashboard' },
-        { href: '/schemes', label: 'Schemes' },
-        { href: '/tax-advisory', label: 'Tax Advisory' },
-        { href: '/wealth-advisory', label: 'Wealth Advisory' },
+        { href: '/dashboard/schemes', label: 'Schemes' },
+        { href: '/dashboard/tax', label: 'Tax Advisory' },
+        { href: '/dashboard/wealth', label: 'Wealth Advisory' },
     ];
 
     return (

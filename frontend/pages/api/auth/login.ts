@@ -36,7 +36,7 @@ const isMatch = await bcrypt.compare(password, user.hashed_password);
         }
 
         const token = jwt.sign({ userId: user.user_id }, process.env.JWT_SECRET!, { expiresIn: '1d' });
-        const redirectTo = user.onboarding_complete ? '/dashboard' : '/privacy';
+        const redirectTo = user.onboarding_complete ? '/dashboard' : '/consent';
 
         return res.status(200).json({
             message: 'Login successful!',
