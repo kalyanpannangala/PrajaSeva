@@ -4,10 +4,11 @@
 import { useState, useEffect, FC } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Landmark, BarChart3, Zap, ArrowRight, BotMessageSquare, Loader2, AlertTriangle } from 'lucide-react';
+import { Landmark, BarChart3, Zap, Loader2, AlertTriangle } from 'lucide-react';
 import Header from '../../components/Header';
 import FloatingChatbot from '../../components/FloatingChatbot';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../../hooks/useAuth';
+import { useIdleTimeout } from '../../hooks/useIdleTimeout';
 
 // --- Type Definitions ---
 interface SchemesSummary {
@@ -28,7 +29,7 @@ interface DashboardData {
     wealth: WealthSummary | null;
 }
 
-// --- Reusable Card Component ---
+// --- Reusable Card Component for dynamic content and empty states ---
 const DashboardCard: FC<{
     title: string;
     icon: React.ReactNode;
@@ -62,43 +63,42 @@ const DashboardCard: FC<{
 
 
 const DashboardPage: NextPage = () => {
-  const router = useRouter();
+  const isAuthenticated = useAuth(); // Protects the route
+  useIdleTimeout(15 * 60 * 1000); // Set a 15-minute inactivity timeout
+
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (!token) { router.push('/auth'); return; }
-    try {
-        const decoded: { exp: number } = jwtDecode(token);
-        if (decoded.exp * 1000 < Date.now()) {
-            localStorage.removeItem('authToken');
-            router.push('/auth');
-            return;
-        }
-    } catch (e) {
-        localStorage.removeItem('authToken');
-        router.push('/auth');
-        return;
+    if (isAuthenticated) {
+        const token = localStorage.getItem('authToken');
+        const fetchDashboardData = async () => {
+            setIsLoading(true);
+            try {
+                const res = await fetch('/api/dashboard/summary', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to load dashboard data.');
+                setDashboardData(await res.json());
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchDashboardData();
     }
+  }, [isAuthenticated]);
 
-    const fetchDashboardData = async () => {
-        setIsLoading(true);
-        try {
-            const res = await fetch('/api/dashboard/summary', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error('Failed to load dashboard data.');
-            setDashboardData(await res.json());
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    fetchDashboardData();
-  }, [router]);
+  // Show a loading screen while the auth check is happening
+  if (!isAuthenticated) {
+    return (
+        <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center">
+            <Loader2 className="h-12 w-12 animate-spin text-[#003366]" />
+        </div>
+    );
+  }
 
   const renderContent = () => {
     if (isLoading) {
@@ -117,7 +117,7 @@ const DashboardPage: NextPage = () => {
                 title="Government Schemes" 
                 icon={<div className="p-3 bg-blue-100 rounded-lg mr-4"><Landmark className="h-8 w-8 text-[#003366]" /></div>}
                 data={dashboardData.schemes}
-                link="/dashboard/schemes"
+                link="/schemes"
                 linkText="Find Schemes"
             >
                 {dashboardData.schemes ? (
@@ -135,7 +135,7 @@ const DashboardPage: NextPage = () => {
                 title="Tax Advisory" 
                 icon={<div className="p-3 bg-green-100 rounded-lg mr-4"><BarChart3 className="h-8 w-8 text-green-800" /></div>}
                 data={dashboardData.tax}
-                link="/dashboard/tax"
+                link="/tax-advisory"
                 linkText="Analyze Tax"
             >
                 {dashboardData.tax ? (
@@ -147,7 +147,7 @@ const DashboardPage: NextPage = () => {
                 title="Wealth Advisory" 
                 icon={<div className="p-3 bg-yellow-100 rounded-lg mr-4"><Zap className="h-8 w-8 text-yellow-800" /></div>}
                 data={dashboardData.wealth}
-                link="/dashboard/wealth"
+                link="/wealth-advisory"
                 linkText="Plan Wealth"
             >
                 {dashboardData.wealth ? (

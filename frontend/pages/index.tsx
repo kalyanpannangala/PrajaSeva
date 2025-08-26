@@ -30,10 +30,10 @@ const PrajaSevaClassicLandingPage: NextPage = () => {
               PrajaSeva is the nation's premier digital platform for personalized government scheme recommendations, tax advisory, and wealth management.
             </p>
             <div className="flex justify-center">
-              <button className="flex items-center bg-[#D4AF37] hover:bg-[#b89b31] text-white font-bold py-4 px-10 rounded-lg shadow-xl transform hover:scale-105 transition-all duration-300 text-lg">
+                <Link href="/auth" className="flex items-center bg-[#D4AF37] hover:bg-[#b89b31] text-white font-bold py-4 px-10 rounded-lg shadow-xl transform hover:scale-105 transition-all duration-300 text-lg">
                 Discover Your Entitlements
                 <ArrowRight className="ml-3 h-6 w-6" />
-              </button>
+                </Link>
             </div>
           </div>
         </section>
