@@ -108,7 +108,7 @@ const DashboardPage: NextPage = () => {
                 title="Government Schemes" 
                 icon={<div className="p-3 bg-blue-100 rounded-lg mr-4"><Landmark className="h-8 w-8 text-[#003366]" /></div>}
                 data={dashboardData.schemes}
-                link="/schemes"
+                link="/dashboard/schemes"
                 linkText="Find Schemes"
             >
                 {dashboardData.schemes ? (
@@ -126,7 +126,7 @@ const DashboardPage: NextPage = () => {
                 title="Tax Advisory" 
                 icon={<div className="p-3 bg-green-100 rounded-lg mr-4"><BarChart3 className="h-8 w-8 text-green-800" /></div>}
                 data={dashboardData.tax}
-                link="/tax-advisory"
+                link="/dashboard/tax"
                 linkText="Analyze Tax"
             >
                 {dashboardData.tax ? (
@@ -138,7 +138,7 @@ const DashboardPage: NextPage = () => {
                 title="Wealth Advisory" 
                 icon={<div className="p-3 bg-yellow-100 rounded-lg mr-4"><Zap className="h-8 w-8 text-yellow-800" /></div>}
                 data={dashboardData.wealth}
-                link="/wealth-advisory"
+                link="/dashboard/wealth"
                 linkText="Plan Wealth"
             >
                 {dashboardData.wealth ? (
