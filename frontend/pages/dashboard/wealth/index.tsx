@@ -11,6 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import FloatingChatbot from '../../../components/FloatingChatbot';
+import withAuth from '../../../components/withAuth';
 
 // --- Type Definitions ---
 interface WealthInput {
@@ -238,4 +239,4 @@ const WealthAdvisoryPage: NextPage = () => {
     );
 };
 
-export default WealthAdvisoryPage;
+export default withAuth(WealthAdvisoryPage);

@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { jwtDecode } from 'jwt-decode';
 import { motion, AnimatePresence } from 'framer-motion';
 import FloatingChatbot from '../../../components/FloatingChatbot';
+import withAuth from '../../../components/withAuth';   
 
 // --- Type Definitions ---
 interface TaxInput {
@@ -339,4 +340,5 @@ const TaxAdvisoryPage: NextPage = () => {
     );
 };
 
-export default TaxAdvisoryPage;
+export default withAuth(TaxAdvisoryPage);
+

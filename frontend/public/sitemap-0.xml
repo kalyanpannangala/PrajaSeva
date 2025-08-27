@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>https://prajaseva.ai</loc><lastmod>2025-08-27T16:11:11.293Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/auth</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/auth/forgot-password</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/auth/reset-password</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/auth/verify</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/consent</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/contact</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard/chatbot</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard/profile</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard/schemes</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard/settings</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard/tax</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/dashboard/wealth</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/privacy-policy</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/schemes-landing</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/setup</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/tax-landing</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/terms</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://prajaseva.ai/wealth-landing</loc><lastmod>2025-08-27T16:11:11.294Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>

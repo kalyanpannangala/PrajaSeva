@@ -91,11 +91,12 @@ const ContactUsPage: NextPage = () => {
           </div>
         </div>
       </main>
-      {/* Footer */}
+     {/* Footer */}
       <footer className="bg-[#E9ECEF]/70 border-t border-gray-200">
         <div className="container mx-auto px-6 py-8 text-center text-gray-500">
           <p>&copy; {new Date().getFullYear()} PrajaSeva. All Rights Reserved.</p>
           <div className="mt-4 space-x-6">
+            <a href="/about" className="hover:text-[#003366]">About Us</a>
             <a href="/privacy-policy" className="hover:text-[#003366]">Privacy Policy</a>
             <a href="/terms" className="hover:text-[#003366]">Terms of Service</a>
             <a href="/contact" className="hover:text-[#003366]">Contact Us</a>

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import { Edit3, Save, BotMessageSquare, Loader2, AlertTriangle } from 'lucide-react';
 import Header from '../../../components/Header'; 
+import withAuth from '../../../components/withAuth';
 
 // --- Define a type for the user's full profile from the API ---
 interface UserProfile {
@@ -228,4 +229,4 @@ const ProfilePage: NextPage = () => {
 };
 
 
-export default ProfilePage;
+export default withAuth(ProfilePage);

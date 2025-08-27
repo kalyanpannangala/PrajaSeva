@@ -6,6 +6,7 @@ import type { NextPage } from 'next';
 import { KeyRound, BotMessageSquare } from 'lucide-react';
 import Header from '../../../components/Header'; // Adjust path as needed
 import { motion, AnimatePresence } from 'framer-motion';
+import withAuth from '../../../components/withAuth';
 
 const SettingsPage: NextPage = () => {
   // State for the change password form
@@ -170,4 +171,5 @@ const SettingsPage: NextPage = () => {
   );
 };
 
-export default SettingsPage;
+export default withAuth(SettingsPage);
+

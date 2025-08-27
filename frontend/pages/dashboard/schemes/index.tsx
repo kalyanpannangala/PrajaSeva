@@ -12,6 +12,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { jwtDecode } from 'jwt-decode';
+import withAuth from '../../../components/withAuth';
 
 // --- Type Definitions ---
 interface Scheme {
@@ -301,4 +302,5 @@ const SchemesPage: NextPage = () => {
     );
 };
 
-export default SchemesPage;
+export default withAuth(SchemesPage);
+

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bot, User, Send, Loader2, Landmark, BarChart3, Zap, X, ExternalLink } from 'lucide-react';
+import { Bot, User, Send, Loader2, Landmark, BarChart3, Zap, X, ExternalLink, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- Type definitions for chat messages ---
@@ -13,26 +13,53 @@ interface Message {
   sender: 'user' | 'bot';
   isToolRedirect?: boolean;
   toolPath?: string;
+  isLoginPrompt?: boolean;
 }
 
 const FloatingChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: "Hello! I am PrajaSeva AI. How can I assist you?", sender: 'bot' }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // --- Check authentication status on component mount and when chat opens ---
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const authStatus = !!token;
+    setIsAuthenticated(authStatus);
+
+    if (isOpen) {
+        if (!authStatus) {
+            setMessages([
+                { id: 1, text: "Welcome to PrajaSeva AI! Please login to continue.", sender: 'bot', isLoginPrompt: true }
+            ]);
+        } else {
+             setMessages([
+                { id: 1, text: "Hello! I am PrajaSeva AI. How can I assist you?", sender: 'bot' }
+            ]);
+        }
+    }
+  }, [isOpen]);
+
+  // --- Scroll to bottom effect ---
   useEffect(() => {
     if (isOpen) {
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isLoading, isOpen]);
 
+  // --- Handle sending a message ---
   const handleSend = async () => {
-    if (input.trim() === '' || isLoading) return;
+    if (input.trim() === '' || isLoading || !isAuthenticated) {
+        if(!isAuthenticated) {
+             const loginMessage: Message = { id: Date.now(), text: "You must be logged in to chat with me. Please log in to continue.", sender: 'bot', isLoginPrompt: true };
+             setMessages(prev => [...prev, loginMessage]);
+        }
+        return;
+    }
 
     const userMessage: Message = { id: Date.now(), text: input, sender: 'user' };
     setMessages(prev => [...prev, userMessage]);
@@ -42,6 +69,10 @@ const FloatingChatbot = () => {
 
     try {
         const token = localStorage.getItem('authToken');
+        // This check is redundant due to the initial guard clause, but good for safety
+        if (!token) {
+             throw new Error("Not authenticated");
+        }
         const response = await fetch('https://kalyanpannangala-prajaseva.hf.space/chat/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -120,6 +151,12 @@ const FloatingChatbot = () => {
                             Go to Tool
                         </button>
                     )}
+                    {message.isLoginPrompt && (
+                         <button onClick={() => router.push('/auth')} className="mt-2 flex items-center bg-green-100 text-green-800 text-sm font-semibold py-1 px-3 rounded-lg hover:bg-green-200">
+                            <LogIn className="w-4 h-4 mr-2" />
+                            Login to Continue
+                        </button>
+                    )}
                   </div>
                   {message.sender === 'user' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><User className="w-5 h-5 text-[#003366]" /></div>}
                 </div>
@@ -131,8 +168,8 @@ const FloatingChatbot = () => {
             {/* Input Area */}
             <div className="p-4 bg-gray-50 border-t flex-shrink-0">
               <div className="relative">
-                <input type="text" placeholder="Ask anything..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} disabled={isLoading} className="w-full pr-12 py-2 px-4 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#003366]" />
-                <button onClick={handleSend} disabled={isLoading} className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#003366] hover:bg-[#002244] text-white rounded-full h-8 w-8 flex items-center justify-center disabled:bg-gray-400">
+                <input type="text" placeholder={isAuthenticated ? "Ask anything..." : "Please login to chat"} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} disabled={isLoading || !isAuthenticated} className="w-full pr-12 py-2 px-4 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#003366] disabled:bg-gray-100" />
+                <button onClick={handleSend} disabled={isLoading || !isAuthenticated} className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#003366] hover:bg-[#002244] text-white rounded-full h-8 w-8 flex items-center justify-center disabled:bg-gray-400">
                   {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </button>
               </div>

@@ -3,18 +3,20 @@
 
 import { useState, useEffect, useRef, FC } from 'react';
 import type { NextPage } from 'next';
-import { Bot, User, Send, Loader2, Landmark, BarChart3, Zap } from 'lucide-react';
+import { Bot, User, Send, Loader2, Landmark, BarChart3, Zap, Mail } from 'lucide-react';
 import Header from '../../../components/Header'; // <-- Import the dedicated header
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import withAuth from '../../../components/withAuth';
 
 // --- Type definitions for chat messages ---
 interface Message {
   id: number;
   text: string;
   sender: 'user' | 'bot';
-  isToolRedirect?: boolean; // New property to identify special messages
-  toolPath?: string; // Path for the button to link to
+  isToolRedirect?: boolean; // Property for tool redirect buttons
+  toolPath?: string;
+  isErrorWithContact?: boolean; // --- NEW: Property for the contact button ---
 }
 
 const ChatbotPage: NextPage = () => {
@@ -63,25 +65,26 @@ const ChatbotPage: NextPage = () => {
             sender: 'bot',
         };
         
-        // --- NEW: Check for tool redirection phrases ---
         if (data.answer.includes("Schemes Recommender tool")) {
             botResponse.isToolRedirect = true;
-            botResponse.toolPath = '/schemes';
+            botResponse.toolPath = '/dashboard/schemes';
         } else if (data.answer.includes("Tax Advisory tool")) {
             botResponse.isToolRedirect = true;
-            botResponse.toolPath = '/tax-advisory';
+            botResponse.toolPath = '/dashboard/tax';
         } else if (data.answer.includes("Wealth Advisory tool")) {
             botResponse.isToolRedirect = true;
-            botResponse.toolPath = '/wealth-advisory';
+            botResponse.toolPath = '/dashboard/wealth';
         }
 
         setMessages(prev => [...prev, botResponse]);
 
     } catch (error) {
+        // --- FIX: Create a special error message object ---
         const errorMessage: Message = {
             id: Date.now() + 1,
-            text: "Sorry, I'm having trouble connecting to my brain right now. Please try again later.",
-            sender: 'bot'
+            text: "Sorry, I'm having trouble connecting to my brain right now. Please ensure you are logged in. If the error persists, please contact support.",
+            sender: 'bot',
+            isErrorWithContact: true // Set the flag to true
         };
         setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -104,7 +107,6 @@ const ChatbotPage: NextPage = () => {
       <Header />
 
       {/* --- Main Chat Content --- */}
-      {/* --- FIX: Reduced padding for a more edge-to-edge feel --- */}
       <main className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         <div className="bg-white flex-1 flex flex-col rounded-xl shadow-2xl border border-gray-200/80 overflow-hidden">
           {/* --- Message Display Area --- */}
@@ -127,7 +129,6 @@ const ChatbotPage: NextPage = () => {
                   )}
                   <div className={`max-w-lg p-4 rounded-2xl ${message.sender === 'user' ? 'bg-[#003366] text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'}`}>
                     <p>{message.text}</p>
-                    {/* --- NEW: Render a button for tool redirects --- */}
                     {message.isToolRedirect && (
                         <button 
                             onClick={() => router.push(message.toolPath!)}
@@ -138,6 +139,16 @@ const ChatbotPage: NextPage = () => {
                             {message.text.includes("Wealth") && <Zap className="w-5 h-5 mr-2" />}
                             Go to Tool
                         </button>
+                    )}
+                    {/* --- FIX: Render a mailto link as a button for the error message --- */}
+                    {message.isErrorWithContact && (
+                        <a 
+                            href="mailto:prajaseva-ai@gmail.com"
+                            className="mt-3 inline-flex items-center bg-red-100 text-red-800 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition-colors"
+                        >
+                            <Mail className="w-5 h-5 mr-2" />
+                            Contact Support
+                        </a>
                     )}
                   </div>
                    {message.sender === 'user' && (
@@ -203,4 +214,4 @@ const ChatbotPage: NextPage = () => {
   );
 };
 
-export default ChatbotPage;
+export default withAuth(ChatbotPage);
