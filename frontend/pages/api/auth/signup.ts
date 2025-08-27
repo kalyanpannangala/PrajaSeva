@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             // If both succeed, commit the transaction
             await query('COMMIT');
 
-            return res.status(201).json({ message: 'Registration successful! Please check your email to verify your account.' });
+            return res.status(201).json({ message: 'Registration successful! Please check your email to verify your account (also check Spam folder). ' });
 
         } catch (error) {
             // If any step fails, roll back all database changes
