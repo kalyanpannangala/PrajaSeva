@@ -6,8 +6,8 @@ import type { NextPage } from 'next';
 import FloatingChatbot from '../../../components/FloatingChatbot';
 import Header from '../../../components/Header';
 import { 
-  Landmark, AlertTriangle, BotMessageSquare, 
-  RefreshCw, User, Info, Edit, Loader2, CheckCircle
+    Landmark, AlertTriangle, BotMessageSquare, 
+    RefreshCw, User, Info, Edit, Loader2, CheckCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -52,7 +52,7 @@ const ProfileSnapshot: FC<{ profile: Partial<UserProfile>; onAnalyze: () => void
                 {profileItems.map(item => (
                     <div key={item.label}>
                         <p className="text-sm text-gray-500">{item.label}</p>
-                        <p className="text-base font-bold text-[#003366] truncate">{item.value}</p>
+                        <p className="text-base font-bold text-[#003366] truncate">{String(item.value)}</p>
                     </div>
                 ))}
             </div>
@@ -229,26 +229,53 @@ const SchemesPage: NextPage = () => {
                     );
                 }
 
+                // --- IMPROVEMENT: Dynamic sorting based on user's state ---
                 const sortedSchemes = [...schemes].sort((a, b) => {
-                    const aIsAP = a.scheme_id.startsWith('AP');
-                    const bIsAP = b.scheme_id.startsWith('AP');
-                    if (aIsAP && !bIsAP) return -1;
-                    if (!aIsAP && bIsAP) return 1;
-                    return a.scheme_name.localeCompare(b.scheme_name);
+                    const userState = profileData.state || '';
+                    const statePrefixMap: { [key: string]: string } = {
+                        'Telangana': 'TS',
+                        'Andhra Pradesh': 'AP',
+                        'Tamil Nadu': 'TN',
+                        'Karnataka': 'KA',
+                        'Kerala': 'KL'
+                    };
+                    const userStatePrefix = statePrefixMap[userState] || '';
+
+                    const getPriority = (scheme_id: string) => {
+                        if (userStatePrefix && scheme_id.startsWith(userStatePrefix)) return 1; // User's state schemes first
+                        if (scheme_id.startsWith('C')) return 2; // Central schemes second
+                        return 3; // Other states third
+                    };
+
+                    const priorityA = getPriority(a.scheme_id);
+                    const priorityB = getPriority(b.scheme_id);
+
+                    if (priorityA !== priorityB) {
+                        return priorityA - priorityB;
+                    }
+                    return a.scheme_name.localeCompare(b.scheme_name); // Alphabetical sort within groups
                 });
 
                 return sortedSchemes.length > 0 ? (
                     <div className="space-y-4">
                         {sortedSchemes.map((scheme) => {
                             let logoSrc = '';
+                            const schemePrefix = scheme.scheme_id.substring(0, 2);
+
                             if (scheme.scheme_id.startsWith('C')) {
                                 logoSrc = '/goi-logo.png';
-                            } else if (scheme.scheme_id.startsWith('AP')) {
-                                logoSrc = '/ap-logo.png';
+                            } else {
+                                const logoMap: { [key: string]: string } = {
+                                    'AP': '/ap-logo.png',
+                                    'TS': '/ts-logo.png',
+                                    'TN': '/tn-logo.png',
+                                    'KA': '/ka-logo.png',
+                                    'KL': '/kl-logo.png'
+                                };
+                                logoSrc = logoMap[schemePrefix] || '/goi-logo.png'; // Fallback logo
                             }
 
                             return (
-                                // --- FIX: Responsive layout for scheme cards ---
                                 <div key={scheme.scheme_id} className="bg-white p-4 rounded-xl shadow-lg border flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                     <div className="flex items-center flex-1 mb-4 sm:mb-0">
                                         <div className="p-2 bg-white rounded-lg border border-gray-200 flex-shrink-0">
@@ -303,4 +330,3 @@ const SchemesPage: NextPage = () => {
 };
 
 export default withAuth(SchemesPage);
-

@@ -28,7 +28,8 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
         user_id: str = payload.get("userId")
-        if user_id is None: raise credentials_exception
+        if user_id is None:
+            raise credentials_exception
         return user_id
     except JWTError:
         raise credentials_exception
@@ -39,6 +40,7 @@ def get_db_connection():
         conn = psycopg2.connect(DATABASE_URL)
         return conn
     except Exception as e:
+        # Keep error message generic for security, but log in your infra if needed
         raise HTTPException(status_code=500, detail="Database connection failed.")
 
 # --- Load ML Model & Data ---
@@ -54,16 +56,16 @@ class TaxInput(BaseModel):
     age: int
     annual_income: float
     is_salaried: bool
-    investment_80c: float
-    investment_80d: float
-    home_loan_interest: float
-    education_loan_interest: float
-    donations_80g: float
-    other_deductions: float
+    investment_80c: float = 0
+    investment_80d: float = 0
+    home_loan_interest: float = 0
+    education_loan_interest: float = 0
+    donations_80g: float = 0
+    other_deductions: float = 0
 
 # -------- Helper Functions --------
 def calc_old_regime_tax(taxable):
-    # This function was correct and remains unchanged.
+    # same old-regime logic you had — preserved
     tax = 0
     if taxable <= 250000:
         tax = 0
@@ -75,32 +77,49 @@ def calc_old_regime_tax(taxable):
         tax = 112500 + 0.3 * (taxable - 1000000)
     return tax * 1.04  # Add 4% cess
 
-# --- FIX: Corrected New Regime Tax Calculation ---
-# This new function correctly handles all income slabs.
+# --- FIXED New Regime Tax Calculation (FY 2025–26) ---
 def calc_new_regime_tax(taxable_income):
-    tax = 0
-    # Tax on income > 15,00,000
-    if taxable_income > 1500000:
-        tax += (taxable_income - 1500000) * 0.30
-    
-    # Tax on income between 12,00,001 and 15,00,000
+    """
+    New regime FY 2025-26:
+    - Standard deduction already applied outside this function.
+    - If taxable_income <= 12,00,000 → tax = 0 (rebate zone per Budget 2025 simplified rule).
+    - Otherwise, apply slabs:
+        0 - 4,00,000       : 0%
+        4,00,001 - 8,00,000: 5%
+        8,00,001 - 12,00,000: 10%
+        12,00,001 - 16,00,000: 15%
+        16,00,001 - 20,00,000: 20%
+        20,00,001 - 24,00,000: 25%
+        24,00,001+          : 30%
+    - Finally add 4% cess.
+    """
+    # Rebate zone: taxable <= 12L → effectively zero tax under new regime rules used here
+    if taxable_income <= 1_200_000:
+        return 0.0
+
+    tax = 0.0
+    # slab calculations (only on amounts above each lower bound)
+    # 0 - 4,00,000 -> 0%
+    if taxable_income > 400000:
+        # 4L - 8L @5%
+        tax += max(0.0, min(taxable_income, 800000) - 400000) * 0.05
+    if taxable_income > 800000:
+        # 8L - 12L @10%
+        tax += max(0.0, min(taxable_income, 1200000) - 800000) * 0.10
     if taxable_income > 1200000:
-        tax += (min(taxable_income, 1500000) - 1200000) * 0.20
-        
-    # Tax on income between 9,00,001 and 12,00,000
-    if taxable_income > 900000:
-        tax += (min(taxable_income, 1200000) - 900000) * 0.15
-        
-    # Tax on income between 6,00,001 and 9,00,000
-    if taxable_income > 600000:
-        tax += (min(taxable_income, 900000) - 600000) * 0.10
-        
-    # Tax on income between 3,00,001 and 6,00,000
-    if taxable_income > 300000:
-        tax += (min(taxable_income, 600000) - 300000) * 0.05
-        
-    # Add 4% cess
-    return tax * 1.04
+        # 12L - 16L @15%
+        tax += max(0.0, min(taxable_income, 1600000) - 1200000) * 0.15
+    if taxable_income > 1600000:
+        # 16L - 20L @20%
+        tax += max(0.0, min(taxable_income, 2000000) - 1600000) * 0.20
+    if taxable_income > 2000000:
+        # 20L - 24L @25%
+        tax += max(0.0, min(taxable_income, 2400000) - 2000000) * 0.25
+    if taxable_income > 2400000:
+        # above 24L @30%
+        tax += (taxable_income - 2400000) * 0.30
+
+    return tax * 1.04  # add 4% cess
 
 # --- API Endpoint ---
 @app.post("/predict_tax")
@@ -113,19 +132,35 @@ def predict_tax(user_id: str = Depends(get_current_user)):
         if not user_input_data:
             raise HTTPException(status_code=404, detail="No tax input data found for this user.")
 
+        # convert DB row (DictCursor) to pydantic model (fields must match)
         data = TaxInput(**user_input_data)
 
+        # Standard deductions
         std_deduction_old = 50000
+        # NEW STD DEDUCTION FOR SALARIED (FY 2025-26)
         std_deduction_new = 75000 if data.is_salaried else 0
-        taxable_old = data.annual_income - std_deduction_old - min(data.investment_80c, 150000) - min(data.investment_80d, 50000) - min(data.home_loan_interest, 200000) - data.education_loan_interest - data.donations_80g - data.other_deductions
+
+        # Compute taxable incomes (respect caps you've used before)
+        taxable_old = data.annual_income \
+                      - std_deduction_old \
+                      - min(data.investment_80c, 150000) \
+                      - min(data.investment_80d, 50000) \
+                      - min(data.home_loan_interest, 200000) \
+                      - data.education_loan_interest \
+                      - data.donations_80g \
+                      - data.other_deductions
         taxable_old = max(taxable_old, 0)
+
         taxable_new = data.annual_income - std_deduction_new
         taxable_new = max(taxable_new, 0)
+
+        # Compute tax amounts using helper functions
         tax_old = calc_old_regime_tax(taxable_old)
         tax_new = calc_new_regime_tax(taxable_new)
+
         recommended = "Old Regime" if tax_old < tax_new else "New Regime"
         tax_saving = abs(tax_old - tax_new)
-        
+
         notes = [
             "Section 80E (education loan interest) is applied to the Old Regime only.",
             f"Standard deductions used: Old Regime ₹{std_deduction_old:,}; New Regime {'₹'+str(std_deduction_new) if std_deduction_new else '₹0'}.",
@@ -147,8 +182,23 @@ def predict_tax(user_id: str = Depends(get_current_user)):
 
         ml_recommendation = "Not available"
         if ml_model:
-            standard_deduction = 50000 if data.is_salaried else 0
-            input_data = pd.DataFrame([[data.age, data.annual_income, int(data.is_salaried), data.investment_80c, data.investment_80d, data.home_loan_interest, data.education_loan_interest, data.donations_80g, data.other_deductions, standard_deduction]], columns=feature_columns)
+            # --- FIX: use NEW standard deduction in ML input to reflect FY 2025–26 ---
+            standard_deduction = 75000 if data.is_salaried else 0
+            input_data = pd.DataFrame(
+                [[
+                    data.age,
+                    data.annual_income,
+                    int(data.is_salaried),
+                    data.investment_80c,
+                    data.investment_80d,
+                    data.home_loan_interest,
+                    data.education_loan_interest,
+                    data.donations_80g,
+                    data.other_deductions,
+                    standard_deduction
+                ]],
+                columns=feature_columns
+            )
             ml_prediction = ml_model.predict(input_data)[0]
             ml_recommendation = "Old Regime" if int(ml_prediction) == 1 else "New Regime"
 
@@ -161,11 +211,23 @@ def predict_tax(user_id: str = Depends(get_current_user)):
                 "deterministic": recommended, "ml_recommendation": ml_recommendation,
                 "tax_saving": round(tax_saving, 2)
             },
-            "notes": notes
+        "notes": [
+            "Old Regime (FY 2024–25 rules): includes deductions (80C, 80D, 80E, home loan interest, etc.).",
+            "New Regime (FY 2025–26 rules): only standard deduction (₹75,000 for salaried).",
+            "Section 80E (education loan interest) is applied to the Old Regime only.",
+            f"Standard deductions used: Old Regime ₹{std_deduction_old:,}; New Regime {'₹'+str(std_deduction_new) if std_deduction_new else '₹0'}.",
+            "Caps: 80C ₹1,50,000; 80D ₹50,000; Home loan interest ₹2,00,000.",
+            "Cess 4% added on tax."
+        ]
         }
+
+    
+
     except Exception as e:
         conn.rollback()
+        # surface safe error to client
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
     finally:
         cursor.close()
         conn.close()
+    

@@ -4,6 +4,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, f1_score, hamming_loss
 import joblib
 import time
 
@@ -27,13 +28,12 @@ def build_pipeline():
 
     clf = Pipeline(steps=[
         ("preprocessor", preprocessor),
-        # Reduce n_estimators for speed; can increase later if needed
         ("classifier", MultiOutputClassifier(
             RandomForestClassifier(
-                n_estimators=75,  # Less trees for faster training
-                max_depth=18,      # Prevent huge tree growth
+                n_estimators=75,      # Less trees for faster training
+                max_depth=18,         # Prevent huge tree growth
                 min_samples_leaf=5,
-                n_jobs=-1,         # Use all CPU cores
+                n_jobs=-1,            # Use all CPU cores
                 random_state=42
             )
         ))
@@ -57,8 +57,22 @@ def train():
     pipeline = build_pipeline()
     pipeline.fit(X, y_bin)
 
-    joblib.dump(pipeline, "schemes_model.pkl", compress=("xz", 3))
+    # 🔹 Evaluation (on training data for now)
+    print("📊 Evaluating model...")
+    y_pred = pipeline.predict(X)
 
+    acc = accuracy_score(y_bin, y_pred)
+    f1_micro = f1_score(y_bin, y_pred, average="micro")
+    f1_macro = f1_score(y_bin, y_pred, average="macro")
+    hamming = hamming_loss(y_bin, y_pred)
+
+    print(f"✅ Accuracy: {acc:.4f}")
+    print(f"✅ F1 (Micro): {f1_micro:.4f}")
+    print(f"✅ F1 (Macro): {f1_macro:.4f}")
+    print(f"✅ Hamming Loss: {hamming:.4f}")
+
+    # Save artifacts
+    joblib.dump(pipeline, "schemes_model.pkl", compress=("xz", 3))
     joblib.dump(target_cols, "label_encoder.pkl")
 
     elapsed_time = time.time() - start_time

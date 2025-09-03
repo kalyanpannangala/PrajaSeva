@@ -9,6 +9,7 @@ import Header from '../../components/Header';
 import FloatingChatbot from '../../components/FloatingChatbot';
 import withAuth from '../../components/withAuth'; // Import the HOC
 import { useIdleTimeout } from '../../hooks/useIdleTimeout';
+import ExportButton from '../../components/ExportButton';
 
 // --- Type Definitions ---
 interface SchemesSummary {
@@ -154,6 +155,7 @@ const DashboardPage: NextPage = () => {
       <Header />
       <main className="p-6 md:p-8 lg:p-10">
         <h1 className="text-3xl font-bold text-[#003366] mb-6">Your Personal Dashboard</h1>
+        <ExportButton services={['schemes', 'tax', 'wealth']} />
         {renderContent()}
       </main>
       <FloatingChatbot />

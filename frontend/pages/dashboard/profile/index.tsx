@@ -6,6 +6,7 @@ import type { NextPage } from 'next';
 import { Edit3, Save, BotMessageSquare, Loader2, AlertTriangle } from 'lucide-react';
 import Header from '../../../components/Header'; 
 import withAuth from '../../../components/withAuth';
+import Link from 'next/link';
 
 // --- Define a type for the user's full profile from the API ---
 interface UserProfile {
@@ -200,9 +201,9 @@ const ProfilePage: NextPage = () => {
             </div>
         )}
          {!isEditing && (
-            <button className="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md hover:shadow-lg">
+            <Link href='/dashboard/schemes' className="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md hover:shadow-lg">
                 Re-run Analysis
-            </button>
+            </Link>
         )}
       </div>
     );

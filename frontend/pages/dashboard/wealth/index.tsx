@@ -4,8 +4,7 @@
 import { useState, useEffect, FC } from 'react';
 import type { NextPage } from 'next';
 import Header from '../../../components/Header';
-import { BotMessageSquare, Loader2, AlertTriangle, Info, Edit, RefreshCw, TrendingUp, ChevronDown } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BotMessageSquare, Loader2, AlertTriangle, Info, Edit, RefreshCw, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { jwtDecode } from 'jwt-decode';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,10 +23,17 @@ interface WealthInput {
     liquidity: string;
     annual_step_up: number;
 }
+interface ProjectionRow {
+    year: number;
+    opening_capital: string;
+    annual_investment: string;
+    interest_earned: string;
+    closing_capital: string;
+}
 interface WealthResult {
     projected_corpus: string;
     inflation_adjusted_corpus: string;
-    projection_data: { year: number; closing_capital: string }[];
+    projection_data: ProjectionRow[];
     recommended_schemes: { scheme_name: string; confidence: number }[];
 }
 
@@ -69,6 +75,111 @@ const WealthInputSnapshot: FC<{ inputData: Partial<WealthInput>; onReanalyze: ()
     );
 };
 
+// --- MODIFIED: Wealth Projection Table Component ---
+const WealthProjectionTable: FC<{ data: ProjectionRow[] }> = ({ data }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+    const paginatedData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+    const getPageNumbers = () => {
+        const pageNumbers: (number | string)[] = [];
+        const pageNeighbours = 1; // Pages to show on each side of the current page
+
+        const startPage = Math.max(1, currentPage - pageNeighbours);
+        const endPage = Math.min(totalPages, currentPage + pageNeighbours);
+
+        if (startPage > 1) {
+            pageNumbers.push(1);
+            if (startPage > 2) {
+                pageNumbers.push('...');
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                pageNumbers.push('...');
+            }
+            pageNumbers.push(totalPages);
+        }
+        
+        return pageNumbers;
+    };
+
+    const pageNumbersToDisplay = getPageNumbers();
+
+    return (
+        <div className="overflow-x-auto bg-white rounded-xl">
+            <table className="min-w-full text-sm text-left">
+                <thead className="bg-gray-100 text-gray-600 uppercase">
+                    <tr>
+                        <th className="px-6 py-3 font-semibold">Year</th>
+                        <th className="px-6 py-3 font-semibold text-right">Opening Capital (₹)</th>
+                        <th className="px-6 py-3 font-semibold text-right">Annual Investment (₹)</th>
+                        <th className="px-6 py-3 font-semibold text-right">Interest Earned (₹)</th>
+                        <th className="px-6 py-3 font-semibold text-right">Closing Capital (₹)</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                    {paginatedData.map((row) => (
+                        <tr key={row.year} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 font-medium text-gray-900">{row.year}</td>
+                            <td className="px-6 py-4 text-gray-700 text-right">{row.opening_capital}</td>
+                            <td className="px-6 py-4 text-green-700 text-right">+{row.annual_investment}</td>
+                            <td className="px-6 py-4 text-green-700 text-right">+{row.interest_earned}</td>
+                            <td className="px-6 py-4 font-bold text-[#003366] text-right">{row.closing_capital}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between p-4 border-t">
+                <span className="text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex items-center space-x-2">
+                     <button 
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+                        disabled={currentPage === 1} 
+                        className="flex items-center p-2 rounded-md disabled:opacity-50 hover:bg-gray-200 text-gray-700 text-sm font-medium"
+                    >
+                        <ChevronLeft className="h-4 w-4 mr-1" />
+                        Previous
+                    </button>
+                    
+                    <div className="hidden md:flex items-center space-x-1">
+                       {pageNumbersToDisplay.map((page, index) => 
+                            typeof page === 'number' ? (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`px-3 py-1 rounded-md text-sm ${currentPage === page ? 'bg-black text-white font-semibold' : 'text-gray-700 hover:bg-gray-200'}`}
+                                >
+                                    {page}
+                                </button>
+                            ) : (
+                                <span key={index} className="px-2 py-1">...</span>
+                            )
+                        )}
+                    </div>
+
+                    <button 
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+                        disabled={currentPage === totalPages} 
+                        className="flex items-center p-2 rounded-md disabled:opacity-50 hover:bg-gray-200 text-gray-700 text-sm font-medium"
+                    >
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const WealthAdvisoryPage: NextPage = () => {
     const [wealthInput, setWealthInput] = useState<Partial<WealthInput>>({});
@@ -172,7 +283,6 @@ const WealthAdvisoryPage: NextPage = () => {
                     <h2 className="text-2xl font-bold text-[#003366] mb-2">Enter Your Wealth Goals</h2>
                     <p className="text-gray-600 mb-6">Provide this information for a personalized investment plan.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                        {/* --- FIX: Added dark text color to labels --- */}
                         <div><label className="text-sm font-medium text-gray-700">Your Current Age</label><input type="number" name="user_age" onChange={handleInputChange} className="w-full mt-1 p-2 border border-gray-300 rounded-md"/></div>
                         <div><label className="text-sm font-medium text-gray-700">Target Retirement Age</label><input type="number" name="retirement_age" onChange={handleInputChange} className="w-full mt-1 p-2 border border-gray-300 rounded-md"/></div>
                         <div><label className="text-sm font-medium text-gray-700">Current Savings (₹)</label><input type="number" name="current_savings" onChange={handleInputChange} className="w-full mt-1 p-2 border border-gray-300 rounded-md"/></div>
@@ -190,7 +300,6 @@ const WealthAdvisoryPage: NextPage = () => {
             );
         }
         if (pageState === 'displaying' && wealthResult) {
-            const chartData = wealthResult.projection_data.map(d => ({...d, closing_capital: parseFloat(d.closing_capital.replace(/,/g, ''))}));
             return (
                 <div className="space-y-8">
                     <WealthInputSnapshot inputData={wealthInput} onReanalyze={handleSaveAndAnalyze} isAnalyzing={isAnalyzing} showEditor={showEditor} setShowEditor={setShowEditor} handleInputChange={handleInputChange} />
@@ -199,16 +308,15 @@ const WealthAdvisoryPage: NextPage = () => {
                             <p className="text-gray-500">Projected Retirement Corpus</p>
                             <p className="text-4xl font-bold text-[#003366]">₹{wealthResult.projected_corpus}</p>
                         </div>
-                        <div className="bg-white p-6 rounded-xl shadow-lg border">
+                       <div className="bg-white p-6 rounded-xl shadow-lg border">
                             <p className="text-gray-500">Value in Today's Money (Inflation Adjusted)</p>
                             <p className="text-4xl font-bold text-green-700">₹{wealthResult.inflation_adjusted_corpus}</p>
                         </div>
                     </div>
-                    <div className="bg-white p-8 rounded-xl shadow-2xl border">
-                        <h3 className="text-2xl font-bold text-[#003366] mb-4">Growth Projection</h3>
-                        <div style={{width: '100%', height: 300}}>
-                            <ResponsiveContainer><LineChart data={chartData}><XAxis dataKey="year" label={{ value: 'Years', position: 'insideBottom', offset: -5 }}/><YAxis tickFormatter={(val) => `₹${val/100000}L`}/><Tooltip formatter={(val: number) => [`₹${val.toLocaleString('en-IN')}`, 'Corpus']}/><Legend /><Line type="monotone" dataKey="closing_capital" stroke="#003366" strokeWidth={2}/></LineChart></ResponsiveContainer>
-                        </div>
+                    {/* --- MODIFIED: Replaced Chart with Table --- */}
+                    <div className="bg-white p-6 md:p-8 rounded-xl shadow-2xl border">
+                        <h3 className="text-2xl font-bold text-[#003366] mb-4">Year-wise SIP Growth Plan</h3>
+                        <WealthProjectionTable data={wealthResult.projection_data} />
                     </div>
                     <div className="bg-white p-8 rounded-xl shadow-2xl border">
                         <h3 className="text-2xl font-bold text-[#003366] mb-4">Top 5 Recommended Schemes</h3>
@@ -240,3 +348,4 @@ const WealthAdvisoryPage: NextPage = () => {
 };
 
 export default withAuth(WealthAdvisoryPage);
+

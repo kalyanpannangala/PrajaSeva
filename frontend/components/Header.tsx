@@ -22,7 +22,7 @@ const Header: FC = () => {
         // Remove the token from local storage to end the session
         localStorage.removeItem('authToken');
         // Redirect to the authentication page
-        router.push('/auth');
+        router.push('/');
     };
 
     useEffect(() => {

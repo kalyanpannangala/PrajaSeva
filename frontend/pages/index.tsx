@@ -42,56 +42,54 @@ const PrajaSevaClassicLandingPage: NextPage = () => {
       </header>
 
       <main className="pt-24">
-        {/* Enhanced Hero Section */}
-        <section className="py-20 md:py-32 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/30 z-0"></div>
-          <div className="container mx-auto px-6 relative z-10">
-            <div className="max-w-4xl mx-auto">
-              <div className="inline-flex items-center bg-blue-100 text-blue-800 rounded-full px-4 py-2 text-sm font-medium mb-6">
-                <Star className="h-4 w-4 mr-2 fill-current" /> Trusted by thousands of Indian citizens
-              </div>
-              <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
-                <span className="bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
-                  Empowering Citizens
-                </span>
-                <br />
-                Through Intelligent Financial Guidance
-              </h1>
-              <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-10 leading-relaxed">
-                PrajaSeva is India's premier AI-powered platform for personalized government scheme recommendations, tax optimization, and wealth management—all in one place.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link href="/auth" className="flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 px-10 rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300 text-lg">
-                  Discover Your Entitlements
-                  <ArrowRight className="ml-3 h-6 w-6" />
-                </Link>
-                <Link href="#features" className="flex items-center justify-center bg-white text-blue-700 border-2 border-blue-200 hover:border-blue-300 font-bold py-4 px-10 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 text-lg">
-                  Explore Features
-                </Link>
-              </div>
-            </div>
-            
-            {/* Stats Section */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-20">
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="text-3xl font-bold text-blue-700">50K+</div>
-                <div className="text-gray-600 mt-2">Active Users</div>
-              </div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="text-3xl font-bold text-blue-700">550+</div>
-                <div className="text-gray-600 mt-2">Govt Schemes</div>
-              </div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="text-3xl font-bold text-blue-700">₹4.5Cr+</div>
-                <div className="text-gray-600 mt-2">Tax Savings</div>
-              </div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="text-3xl font-bold text-blue-700">98%</div>
-                <div className="text-gray-600 mt-2">Satisfaction Rate</div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <section className="py-20 md:py-32 text-center relative overflow-hidden bg-gray-50">
+  <div className="container mx-auto px-6 relative z-10">
+    <div className="max-w-4xl mx-auto">
+      <div className="inline-flex items-center bg-blue-100 text-[#003366] rounded-full px-4 py-2 text-sm font-medium mb-6">
+        <Star className="h-4 w-4 mr-2 fill-current" /> Trusted by thousands of Indian citizens
+      </div>
+      <h1 className="text-5xl md:text-6xl font-extrabold text-[#003366] leading-tight mb-6">
+        Empowering Citizens
+        <br />
+        <span className="bg-gradient-to-r from-[#003366] to-[#0055A4] bg-clip-text text-transparent">
+          Through Intelligent Financial Guidance
+        </span>
+      </h1>
+      <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-10 leading-relaxed">
+        PrajaSeva is India's premier AI-powered platform for personalized government scheme recommendations, tax optimization, and wealth management—all in one place.
+      </p>
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+        <Link href="/auth" className="flex items-center justify-center bg-gradient-to-r from-[#003366] to-[#0055A4] hover:from-[#002244] hover:to-[#003366] text-white font-bold py-4 px-10 rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300 text-lg">
+          Discover Your Entitlements
+          <ArrowRight className="ml-3 h-6 w-6" />
+        </Link>
+        <Link href="#features" className="flex items-center justify-center bg-white text-[#003366] border-2 border-blue-200 hover:bg-blue-50 font-bold py-4 px-10 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 text-lg">
+          Explore Features
+        </Link>
+      </div>
+    </div>
+    
+    {/* Stats Section */}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-20">
+      <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="text-3xl font-bold text-[#003366]">50K+</div>
+        <div className="text-gray-600 mt-2">Active Users</div>
+      </div>
+      <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="text-3xl font-bold text-[#003366]">550+</div>
+        <div className="text-gray-600 mt-2">Govt Schemes</div>
+      </div>
+      <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="text-3xl font-bold text-[#003366]">₹4.5Cr+</div>
+        <div className="text-gray-600 mt-2">Tax Savings</div>
+      </div>
+      <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="text-3xl font-bold text-[#003366]">98%</div>
+        <div className="text-gray-600 mt-2">Satisfaction Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
         {/* Features Section */}
