@@ -21,9 +21,12 @@ const PublicHeader = () => (
             priority
           />
         </Link>
-        <Link href="/auth" className="hidden md:block bg-[#003366] hover:bg-[#002244] text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
-          Get Started
-        </Link>
+        
+        <div className="flex items-center gap-4">
+              <Link href="/about" className="hidden md:inline text-sm text-gray-700 hover:text-[#003366]">About</Link>
+              <Link href="/blog" className="hidden md:inline text-sm text-gray-700 hover:text-[#003366]">Blog</Link>
+              <Link href="/auth" className="ml-2 inline-block bg-gradient-to-r from-[#003366] to-[#0055A4] text-white px-4 py-2 rounded-lg shadow-md hover:scale-[1.01] transform transition">Get Started</Link>
+            </div>
       </div>
     </header>
 );
@@ -40,7 +43,7 @@ const AboutUsPage: NextPage = () => {
 
       <main>
         {/* --- Hero Section --- */}
-        <section className="pt-32 pb-20 bg-white">
+        <section className="pt-48 pb-20 bg-white">
           <div className="container mx-auto px-6 text-center">
             <h1 className="text-4xl md:text-6xl font-extrabold text-[#003366] leading-tight mb-6">
               For the People, By the Next Generation.

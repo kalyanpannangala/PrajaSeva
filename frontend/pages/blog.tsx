@@ -56,28 +56,25 @@ const BlogPage: NextPage = () => {
       
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-3 cursor-pointer" aria-label="Go to home">
-              <Image 
-                  src="/PS-Logo-Bg.png" 
-                  alt="PrajaSeva Logo" 
-                  width={192}
-                  height={48}
-                  className="h-12 w-auto"
-                  priority
-              />
-            </Link>
-            <nav className="hidden md:flex items-center space-x-8">
-                <Link href="/#features" className="text-gray-600 hover:text-[#003366] transition-colors">Features</Link>
-                <Link href="/about" className="text-gray-600 hover:text-[#003366] transition-colors">About Us</Link>
-                <Link href="/blog" className="text-[#003366] font-semibold">Blog</Link>
-                <Link href="/contact" className="text-gray-600 hover:text-[#003366] transition-colors">Contact</Link>
-            </nav>
-            <Link href="/auth" className="hidden md:block bg-[#003366] hover:bg-[#002244] text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
-              Get Started
-            </Link>
-        </div>
-      </header>
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <Link href="/" className="flex items-center space-x-3 cursor-pointer" aria-label="Go to home">
+          <Image 
+            src="/PS-Logo-Bg.png" 
+            alt="PrajaSeva Logo" 
+            width={192}
+            height={48}
+            className="h-12 w-auto"
+            priority
+          />
+        </Link>
+        
+        <div className="flex items-center gap-4">
+              <Link href="/about" className="hidden md:inline text-sm text-gray-700 hover:text-[#003366]">About</Link>
+              <Link href="/blog" className="hidden md:inline text-sm text-gray-700 hover:text-[#003366]">Blog</Link>
+              <Link href="/auth" className="ml-2 inline-block bg-gradient-to-r from-[#003366] to-[#0055A4] text-white px-4 py-2 rounded-lg shadow-md hover:scale-[1.01] transform transition">Get Started</Link>
+            </div>
+      </div>
+    </header>
 
       <main className="pt-24">
         {/* Page Header */}
