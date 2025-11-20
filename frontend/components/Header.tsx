@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, FC } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { User, Settings, LogOut, Bell, ChevronDown } from 'lucide-react';
+import { User, Settings, LogOut, Bell, ChevronDown, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface UserProfile {
@@ -15,6 +15,8 @@ const Header: FC = () => {
     const pathname = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+    const mobileNavRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<UserProfile | null>(null);
 
     // --- NEW: Logout Function ---
@@ -47,8 +49,12 @@ const Header: FC = () => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            const target = event.target as Node;
+            if (dropdownRef.current && !dropdownRef.current.contains(target)) {
                 setIsDropdownOpen(false);
+            }
+            if (mobileNavRef.current && !mobileNavRef.current.contains(target)) {
+                setIsMobileNavOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -69,49 +75,57 @@ const Header: FC = () => {
     ];
 
     return (
-        <header className="h-20 bg-white border-b border-gray-200/80 flex items-center justify-between px-6 sticky top-0 z-40">
-            <div className="flex items-center space-x-8">
-                <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push('/dashboard')}>
-                    <img src="/PS-Logo-Bg.png" alt="PrajaSeva Logo" className="h-12" />
-                </div>
-                <nav className="hidden md:flex items-center space-x-6">
+    <header className="relative h-20 bg-white border-b border-gray-200/80 flex items-center px-6 sticky top-0 z-40">
+            {/* Left: Logo */}
+            <div className="flex items-center flex-shrink-0 cursor-pointer" onClick={() => router.push('/dashboard')}>
+                <img src="/PS-Logo-Bg.png" alt="PrajaSeva Logo" className="h-12" />
+            </div>
+
+            {/* Center: Navigation */}
+            <nav className="flex-1 flex justify-center">
+                <div className="hidden md:flex items-center space-x-4 bg-white/60 backdrop-blur px-4 py-2 rounded-full shadow-sm">
                     {navLinks.map(link => (
-                        <a 
-                            key={link.href} 
+                        <a
+                            key={link.href}
                             href={link.href}
-                            className={`text-lg font-medium transition-colors ${pathname === link.href ? 'text-[#003366]' : 'text-gray-500 hover:text-[#003366]'}`}
+                            className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${pathname === link.href ? 'bg-[#003366] text-white shadow' : 'text-gray-600 hover:bg-gray-100'}`}
                         >
                             {link.label}
                         </a>
                     ))}
-                </nav>
-            </div>
+                </div>
+            </nav>
 
-            <div className="flex items-center space-x-6">
-                <button className="text-gray-500 hover:text-[#003366] relative">
-                    <Bell className="h-6 w-6" />
-                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
-                <div className="relative" ref={dropdownRef}>
-                    <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2">
-                        <img 
-                            src={getAvatarUrl()} 
-                            alt="User Avatar" 
-                            className="h-10 w-10 rounded-full border-2 border-gray-300"
-                        />
-                        <ChevronDown className={`h-5 w-5 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            {/* Right: Actions */}
+            <div className="flex items-center space-x-4">
+                {/* Mobile menu button (visible on small screens) */}
+                <div className="md:hidden" ref={mobileNavRef}>
+                    <button onClick={() => setIsMobileNavOpen(!isMobileNavOpen)} aria-label="Open navigation" className="p-2 rounded-md hover:bg-gray-50">
+                        <Menu className="h-6 w-6 text-gray-600" />
                     </button>
+                </div>
+                
+
+                <div className="relative" ref={dropdownRef}>
+                    <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2 px-2 py-1 rounded-full hover:bg-gray-50">
+                        <img
+                            src={getAvatarUrl()}
+                            alt="User Avatar"
+                            className="h-10 w-10 rounded-full border-2 border-gray-200"
+                        />
+                    </button>
+
                     <AnimatePresence>
                         {isDropdownOpen && (
                             <motion.div
-                                initial={{ opacity: 0, y: -10 }}
+                                initial={{ opacity: 0, y: -8 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.2 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.18 }}
                                 className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-200/80 overflow-hidden"
                             >
                                 <div className="p-4 border-b">
-                                    <p className="font-bold text-[#003366]">{user?.name || 'Loading...'}</p>
+                                    <p className="font-semibold text-[#003366]">{user?.name || 'Loading...'}</p>
                                     <p className="text-sm text-gray-500">Welcome back!</p>
                                 </div>
                                 <div className="py-2">
@@ -124,6 +138,27 @@ const Header: FC = () => {
                     </AnimatePresence>
                 </div>
             </div>
+
+            {/* Mobile navigation dropdown (small screens) */}
+            <AnimatePresence>
+                {isMobileNavOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.16 }}
+                        className="md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 shadow-lg z-50"
+                    >
+                        <div className="flex flex-col divide-y">
+                            {navLinks.map(link => (
+                                <a key={link.href} href={link.href} onClick={() => setIsMobileNavOpen(false)} className={`px-6 py-4 text-base font-medium ${pathname === link.href ? 'bg-gray-100 text-[#003366]' : 'text-gray-700 hover:bg-gray-50'}`}>
+                                    {link.label}
+                                </a>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     );
 };

@@ -1,7 +1,7 @@
 // pages/auth.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { NextPage } from 'next';
 import { User, AtSign, Lock, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/router'; // Correct import for Pages Router
@@ -21,6 +21,21 @@ const UnifiedAuthPage: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const router = useRouter();
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const fullNameInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus password field when login step appears
+  useEffect(() => {
+    if (authStep === 'login' && passwordInputRef.current) {
+      setTimeout(() => {
+        passwordInputRef.current?.focus();
+      }, 100);
+    } else if (authStep === 'signup' && fullNameInputRef.current) {
+      setTimeout(() => {
+        fullNameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [authStep]);
 
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,12 +142,12 @@ const UnifiedAuthPage: NextPage = () => {
                   {authStep === 'signup' && (
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><User className="h-5 w-5 text-gray-400" /></div>
-                      <input id="full-name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required placeholder="Full Name" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
+                      <input ref={fullNameInputRef} id="full-name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required placeholder="Full Name" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
                     </div>
                   )}
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Lock className="h-5 w-5 text-gray-400" /></div>
-                    <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
+                    <input ref={passwordInputRef} id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
                   </div>
                   
                   {/* --- FORGOT PASSWORD LINK --- */}
@@ -154,6 +169,12 @@ const UnifiedAuthPage: NextPage = () => {
               {isLoading ? 'Processing...' : 'Continue'}
               {!isLoading && <ArrowRight className="ml-2 h-6 w-6 transform group-hover:translate-x-1 transition-transform" />}
             </button>
+
+            <Link href="/" className="-mt-2 block">
+              <button type="button" className="w-full flex justify-center py-2 px-4 text-base font-medium rounded-md text-[#003366] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-300">
+              Back to Home
+              </button>
+            </Link>
           </form>
         )}
       </div>

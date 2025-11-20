@@ -26,8 +26,8 @@ for col in ['allowed_genders', 'allowed_castes', 'allowed_employments', 'disabil
 # --- Define Valid User Profile Options (CORRECTED) ---
 # These lists should ONLY contain actual values a user can have, never "Any".
 VALID_STATES = list(set(rules[rules["state"] != "Any"]["state"].unique()))
-VALID_GENDERS = ["Male", "Female", "Other"]
-VALID_CASTES = ["General", "OBC", "SC", "ST"]
+VALINDERS = ["Male", "Female", "Other"]
+VALID_CASTD_GEES = ["General", "OBC", "SC", "ST"]
 VALID_EMPLOYMENTS = ["Student", "Farmer", "Private-employed", "Government-employed", "Retired", "Self-employed", "Un-employed"]
 VALID_DISABILITIES = ["Yes", "No"]
 VALID_EDUCATIONS = ["Un-educated", "Secondary", "Graduate", "Postgraduate", "Other"]
