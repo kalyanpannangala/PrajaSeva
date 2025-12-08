@@ -229,7 +229,6 @@ const SchemesPage: NextPage = () => {
                     );
                 }
 
-                // --- IMPROVEMENT: Dynamic sorting based on user's state ---
                 const sortedSchemes = [...schemes].sort((a, b) => {
                     const userState = profileData.state || '';
                     const statePrefixMap: { [key: string]: string } = {
@@ -242,9 +241,9 @@ const SchemesPage: NextPage = () => {
                     const userStatePrefix = statePrefixMap[userState] || '';
 
                     const getPriority = (scheme_id: string) => {
-                        if (userStatePrefix && scheme_id.startsWith(userStatePrefix)) return 1; // User's state schemes first
-                        if (scheme_id.startsWith('C')) return 2; // Central schemes second
-                        return 3; // Other states third
+                        if (userStatePrefix && scheme_id.startsWith(userStatePrefix)) return 1;
+                        if (scheme_id.startsWith('C')) return 2;
+                        return 3;
                     };
 
                     const priorityA = getPriority(a.scheme_id);
@@ -253,7 +252,7 @@ const SchemesPage: NextPage = () => {
                     if (priorityA !== priorityB) {
                         return priorityA - priorityB;
                     }
-                    return a.scheme_name.localeCompare(b.scheme_name); // Alphabetical sort within groups
+                    return a.scheme_name.localeCompare(b.scheme_name);
                 });
 
                 return sortedSchemes.length > 0 ? (
@@ -272,7 +271,7 @@ const SchemesPage: NextPage = () => {
                                     'KA': '/ka-logo.png',
                                     'KL': '/kl-logo.png'
                                 };
-                                logoSrc = logoMap[schemePrefix] || '/goi-logo.png'; // Fallback logo
+                                logoSrc = logoMap[schemePrefix] || '/goi-logo.png';
                             }
 
                             return (
@@ -289,7 +288,12 @@ const SchemesPage: NextPage = () => {
                                             <h3 className="text-lg font-bold text-[#003366]">{scheme.scheme_name}</h3>
                                         </div>
                                     </div>
-                                    <button className="bg-[#D4AF37] hover:bg-[#b89b31] text-white font-semibold py-2 px-5 rounded-lg w-full sm:w-auto">View Details</button>
+                                    <Link 
+                                        href={`/dashboard/schemes/${scheme.scheme_id}`}
+                                        className="bg-[#D4AF37] hover:bg-[#b89b31] text-white font-semibold py-2 px-5 rounded-lg w-full sm:w-auto text-center"
+                                    >
+                                        View Details
+                                    </Link>
                                 </div>
                             );
                         })}
