@@ -225,8 +225,8 @@ export default function SchemeDetailsPage({ scheme, error }: SchemeDetailsPagePr
             </Link></span></p>
              <p className="flex items-center justify-center">
                 or for exclusive support reach us at 
-                <a href="mailto:prajaseva-ai@gmail.com" className="ml-1 text-blue-600 hover:text-blue-800 font-medium hover:underline flex items-center">
-                   prajaseva-ai@gmail.com <Mail className="w-4 h-4 ml-1" />
+                <a href="mailto:prajaseva.ai@gmail.com" className="ml-1 text-blue-600 hover:text-blue-800 font-medium hover:underline flex items-center">
+                   prajaseva.ai@gmail.com <Mail className="w-4 h-4 ml-1" />
                 </a>
              </p>
           </div>
