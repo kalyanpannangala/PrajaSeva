@@ -57,8 +57,8 @@ const DownloadPage: NextPage = () => {
   const handleDownload = () => {
     // Create a temporary anchor element to trigger download
     const link = document.createElement('a');
-    link.href = '/prajaseva-app.apk';
-    link.download = 'prajaseva-app.apk';
+    link.href = '/PrajaSeva.apk';
+    link.download = 'PrajaSeva.apk';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

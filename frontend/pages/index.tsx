@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRight, ShieldCheck, Landmark, BarChart3, Zap, MessageCircleQuestion, Star } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Landmark, BarChart3, Zap, MessageCircleQuestion, Star, Smartphone } from 'lucide-react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -216,6 +216,68 @@ const PrajaSevaModernLanding: NextPage = () => {
           </div>
         </section>
 
+        {/* DOWNLOAD APP */}
+        <section id="download" className="py-20 bg-gradient-to-br from-[#003366] via-[#0055A4] to-[#0077CC] text-white">
+          <div className="container mx-auto px-6">
+            <motion.div 
+              initial="hidden" 
+              whileInView="show" 
+              viewport={{ once: true }} 
+              variants={container} 
+              className="flex flex-col md:flex-row items-center gap-12"
+            >
+              <motion.div variants={fadeUp} className="md:w-1/2 text-center md:text-left">
+                <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium mb-6">
+                  <Smartphone className="h-4 w-4 mr-2" />
+                  <span>Available Now</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                  Take PrajaSeva <br />Anywhere You Go
+                </h2>
+                <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+                  Access government schemes, tax tools, and wealth management right from your mobile device. Download our free Android app today.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                  <Link 
+                    href="/download"
+                    className="inline-flex items-center gap-3 justify-center bg-white text-[#003366] font-semibold py-4 px-8 rounded-xl shadow-xl hover:scale-[1.03] transform transition text-lg"
+                  >
+                    <Smartphone className="h-5 w-5" />
+                    Download for Android
+                  </Link>
+                </div>
+                <p className="mt-6 text-sm text-blue-200">
+                  <ShieldCheck className="w-4 h-4 inline mr-2" />
+                  100% Free • Secure • No Ads
+                </p>
+              </motion.div>
+              
+              <motion.div variants={fadeUp} className="md:w-1/2">
+                <div className="relative">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                      <div className="text-3xl font-bold mb-2">550+</div>
+                      <div className="text-blue-100">Government Schemes</div>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                      <div className="text-3xl font-bold mb-2">AI-Powered</div>
+                      <div className="text-blue-100">Smart Recommendations</div>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                      <div className="text-3xl font-bold mb-2">Instant</div>
+                      <div className="text-blue-100">Tax Calculations</div>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                      <div className="text-3xl font-bold mb-2">24/7</div>
+                      <div className="text-blue-100">Access Anywhere</div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* SECURITY */}
         <section id="security" className="py-20 bg-[#F8FAFB]">
           <div className="container mx-auto px-6">
@@ -297,7 +359,7 @@ const PrajaSevaModernLanding: NextPage = () => {
                 <li><Link href="/schemes-landing" className="text-gray-600 hover:text-blue-700">Scheme Recommendations</Link></li>
                 <li><Link href="/tax-landing" className="text-gray-600 hover:text-blue-700">Tax Optimization</Link></li>
                 <li><Link href="/wealth-landing" className="text-gray-600 hover:text-blue-700">Wealth Advisory</Link></li>
-                <li><Link href="/dashboard/chatbot" className="text-gray-600 hover:text-blue-700">PrajaSeva AI</Link></li>
+                <li><Link href="/download" className="text-gray-600 hover:text-blue-700">Download App</Link></li>
               </ul>
             </div>
 
