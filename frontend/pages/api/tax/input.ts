@@ -2,8 +2,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/lib/db';
 import { getUserIdFromToken } from '@/lib/auth';
+import { withCors } from '@/lib/cors';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const userId = getUserIdFromToken(req);
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -61,3 +62,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Allow', ['GET', 'POST']);
     return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
 }
+
+export default withCors(handler);
