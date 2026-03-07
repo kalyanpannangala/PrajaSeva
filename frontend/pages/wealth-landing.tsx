@@ -21,9 +21,14 @@ const PublicHeader = () => (
             className="h-12 w-auto" // Tailwind classes still control the displayed size
           />
         </Link>
-        <Link href="/auth" className="hidden md:block bg-[#003366] hover:bg-[#002244] text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
-          Get Started
-        </Link>
+        <div className="flex items-center gap-4">
+          {/* Google Translate Widget */}
+          <div id="google_translate_element" className="translate-widget"></div>
+          
+          <Link href="/auth" className="hidden md:block bg-[#003366] hover:bg-[#002244] text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
+            Get Started
+          </Link>
+        </div>
       </div>
     </header>
 );

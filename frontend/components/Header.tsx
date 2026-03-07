@@ -3,8 +3,16 @@
 
 import { useState, useEffect, useRef, FC } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { User, Settings, LogOut, Bell, ChevronDown, Menu } from 'lucide-react';
+import { User, Settings, LogOut, Bell, ChevronDown, Menu, Languages } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Google Translate type declarations
+declare global {
+  interface Window {
+    google: any;
+    googleTranslateElementInit: () => void;
+  }
+}
 
 interface UserProfile {
   name: string;
@@ -18,6 +26,7 @@ const Header: FC = () => {
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const mobileNavRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<UserProfile | null>(null);
+    const [translateLoaded, setTranslateLoaded] = useState(false);
 
     // --- NEW: Logout Function ---
     const handleLogout = () => {
@@ -26,6 +35,53 @@ const Header: FC = () => {
         // Redirect to the authentication page
         router.push('/');
     };
+
+    // Initialize Google Translate
+    useEffect(() => {
+        const checkGoogleTranslate = () => {
+            if (window.google && window.google.translate && !translateLoaded) {
+                const desktopElement = document.getElementById('google_translate_element');
+                const mobileElement = document.getElementById('google_translate_element_mobile');
+                
+                if (desktopElement && !desktopElement.hasChildNodes()) {
+                    new window.google.translate.TranslateElement(
+                        {
+                            pageLanguage: 'en',
+                            includedLanguages: 'hi,bn,te,ta,mr,gu,kn,ml,pa,ur,or,as,ne,sa,ks,sd',
+                            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+                            autoDisplay: false
+                        },
+                        'google_translate_element'
+                    );
+                }
+                
+                if (mobileElement && !mobileElement.hasChildNodes()) {
+                    new window.google.translate.TranslateElement(
+                        {
+                            pageLanguage: 'en',
+                            includedLanguages: 'hi,bn,te,ta,mr,gu,kn,ml,pa,ur,or,as,ne,sa,ks,sd',
+                            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+                            autoDisplay: false
+                        },
+                        'google_translate_element_mobile'
+                    );
+                }
+                setTranslateLoaded(true);
+            }
+        };
+
+        // Check immediately
+        checkGoogleTranslate();
+
+        // Also check periodically in case script loads late
+        const interval = setInterval(checkGoogleTranslate, 100);
+        const timeout = setTimeout(() => clearInterval(interval), 5000);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }, [translateLoaded]);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -98,6 +154,11 @@ const Header: FC = () => {
 
             {/* Right: Actions */}
             <div className="flex items-center space-x-4">
+                {/* Google Translate Widget */}
+                <div className="hidden md:block">
+                    <div id="google_translate_element" className="translate-widget"></div>
+                </div>
+
                 {/* Mobile menu button (visible on small screens) */}
                 <div className="md:hidden" ref={mobileNavRef}>
                     <button onClick={() => setIsMobileNavOpen(!isMobileNavOpen)} aria-label="Open navigation" className="p-2 rounded-md hover:bg-gray-50">
@@ -155,6 +216,14 @@ const Header: FC = () => {
                                     {link.label}
                                 </a>
                             ))}
+                            {/* Translate Widget for Mobile */}
+                            <div className="px-6 py-4 bg-gray-50">
+                                <div className="flex items-center gap-2">
+                                    <Languages className="h-5 w-5 text-gray-600" />
+                                    <span className="text-sm font-medium text-gray-700">Language:</span>
+                                </div>
+                                <div id="google_translate_element_mobile" className="mt-2"></div>
+                            </div>
                         </div>
                     </motion.div>
                 )}

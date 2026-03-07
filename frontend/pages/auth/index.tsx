@@ -114,7 +114,12 @@ const UnifiedAuthPage: NextPage = () => {
   };
 
   return (
-    <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center font-sans">
+    <div className="bg-[#F8F9FA] min-h-screen flex items-center justify-center font-sans relative">
+      {/* Google Translate Widget - Top Right */}
+      <div className="absolute top-6 right-6 z-50">
+        <div id="google_translate_element" className="translate-widget"></div>
+      </div>
+      
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-2xl border border-gray-200/80">
         
         <div className="text-center">

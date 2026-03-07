@@ -69,6 +69,9 @@ const BlogPage: NextPage = () => {
         </Link>
         
         <div className="flex items-center gap-4">
+              {/* Google Translate Widget */}
+              <div id="google_translate_element" className="translate-widget"></div>
+              
               <Link href="/about" className="hidden md:inline text-sm text-gray-700 hover:text-[#003366]">About</Link>
               <Link href="/blog" className="hidden md:inline text-sm text-gray-700 hover:text-[#003366]">Blog</Link>
               <Link href="/auth" className="ml-2 inline-block bg-gradient-to-r from-[#003366] to-[#0055A4] text-white px-4 py-2 rounded-lg shadow-md hover:scale-[1.01] transform transition">Get Started</Link>
