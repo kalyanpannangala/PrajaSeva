@@ -52,4 +52,3 @@ const isMatch = await bcrypt.compare(password, user.hashed_password);
 }
 
 export default withCors(handler);
-}
