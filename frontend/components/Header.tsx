@@ -9,14 +9,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Google Translate type declarations
 declare global {
   interface Window {
-    google: any;
-    googleTranslateElementInit: () => void;
+        google?: any;
+        googleTranslateElementInit?: () => void;
   }
 }
 
 interface UserProfile {
   name: string;
 }
+
+const getTranslateConfig = () => {
+        const translateElement = window?.google?.translate?.TranslateElement;
+        const inlineLayout = translateElement?.InlineLayout;
+        const hasSimpleLayout = typeof inlineLayout?.SIMPLE !== 'undefined';
+
+        return {
+                pageLanguage: 'en',
+                includedLanguages: 'hi,bn,te,ta,mr,gu,kn,ml,pa,ur,or,as,ne,sa,ks,sd',
+                ...(hasSimpleLayout ? { layout: inlineLayout.SIMPLE } : {}),
+                autoDisplay: false
+        };
+};
 
 const Header: FC = () => {
     const router = useRouter();
@@ -39,32 +52,27 @@ const Header: FC = () => {
     // Initialize Google Translate
     useEffect(() => {
         const checkGoogleTranslate = () => {
-            if (window.google && window.google.translate && !translateLoaded) {
+            const translateElement = window?.google?.translate?.TranslateElement;
+
+            if (translateElement && !translateLoaded) {
                 const desktopElement = document.getElementById('google_translate_element');
                 const mobileElement = document.getElementById('google_translate_element_mobile');
+                const config = getTranslateConfig();
                 
                 if (desktopElement && !desktopElement.hasChildNodes()) {
-                    new window.google.translate.TranslateElement(
-                        {
-                            pageLanguage: 'en',
-                            includedLanguages: 'hi,bn,te,ta,mr,gu,kn,ml,pa,ur,or,as,ne,sa,ks,sd',
-                            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-                            autoDisplay: false
-                        },
-                        'google_translate_element'
-                    );
+                    try {
+                        new translateElement(config, 'google_translate_element');
+                    } catch (error) {
+                        console.warn('Google Translate desktop init skipped:', error);
+                    }
                 }
                 
                 if (mobileElement && !mobileElement.hasChildNodes()) {
-                    new window.google.translate.TranslateElement(
-                        {
-                            pageLanguage: 'en',
-                            includedLanguages: 'hi,bn,te,ta,mr,gu,kn,ml,pa,ur,or,as,ne,sa,ks,sd',
-                            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-                            autoDisplay: false
-                        },
-                        'google_translate_element_mobile'
-                    );
+                    try {
+                        new translateElement(config, 'google_translate_element_mobile');
+                    } catch (error) {
+                        console.warn('Google Translate mobile init skipped:', error);
+                    }
                 }
                 setTranslateLoaded(true);
             }
