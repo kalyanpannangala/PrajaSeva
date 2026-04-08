@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import pandas as pd
 import joblib
 from pathlib import Path
+from threading import Lock
 import psycopg2
 from psycopg2.extras import DictCursor
 from jose import JWTError, jwt
@@ -53,13 +54,36 @@ def get_db_connection():
 
 # --- Load ML Model & Data ---
 base_dir = Path(__file__).resolve().parent
-pipeline = joblib.load(base_dir / "schemes_model.pkl")
-scheme_columns = joblib.load(base_dir / "label_encoder.pkl")
-rules_df = pd.read_csv(base_dir / "schemes_rules.csv")
+pipeline = None
+scheme_columns = None
+rules_df = None
+_model_load_lock = Lock()
+
+def ensure_model_loaded():
+    global pipeline, scheme_columns, rules_df
+    if pipeline is not None and scheme_columns is not None and rules_df is not None:
+        return
+
+    with _model_load_lock:
+        if pipeline is not None and scheme_columns is not None and rules_df is not None:
+            return
+        try:
+            pipeline = joblib.load(base_dir / "schemes_model.pkl")
+            scheme_columns = joblib.load(base_dir / "label_encoder.pkl")
+            rules_df = pd.read_csv(base_dir / "schemes_rules.csv")
+        except MemoryError:
+            raise HTTPException(
+                status_code=503,
+                detail="Insufficient memory to load schemes model. Try again later or increase server memory."
+            )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to load schemes model assets: {str(e)}")
 
 # --- API Endpoint ---
 @app.post("/predict")
 def predict_schemes(profile: ProfileData, user_id: str = Depends(get_current_user)):
+    ensure_model_loaded()
+
     conn = get_db_connection()
     cursor = conn.cursor()
 

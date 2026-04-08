@@ -11,6 +11,7 @@ from psycopg2.extras import DictCursor
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
+from threading import Lock
 
 # --- Environment Setup ---
 load_dotenv()
@@ -45,11 +46,33 @@ def get_db_connection():
 
 # --- Load ML Model & Data ---
 base_dir = Path(__file__).resolve().parent
-ml_model = joblib.load(base_dir / "tax_model.pkl") if (base_dir / "tax_model.pkl").exists() else None
-feature_columns = joblib.load(base_dir / "feature_columns.pkl") if (base_dir / "feature_columns.pkl").exists() else [
-    'age','annual_income','is_salaried','investment_80c','investment_80d',
-    'home_loan_interest','education_loan_interest','donations_80g','other_deductions','standard_deduction'
-]
+ml_model = None
+feature_columns = None
+_model_load_lock = Lock()
+
+def ensure_model_loaded():
+    global ml_model, feature_columns
+    if feature_columns is not None:
+        return
+
+    with _model_load_lock:
+        if feature_columns is not None:
+            return
+
+        default_columns = [
+            'age', 'annual_income', 'is_salaried', 'investment_80c', 'investment_80d',
+            'home_loan_interest', 'education_loan_interest', 'donations_80g', 'other_deductions', 'standard_deduction'
+        ]
+
+        try:
+            ml_model = joblib.load(base_dir / "tax_model.pkl") if (base_dir / "tax_model.pkl").exists() else None
+            feature_columns = joblib.load(base_dir / "feature_columns.pkl") if (base_dir / "feature_columns.pkl").exists() else default_columns
+        except MemoryError:
+            ml_model = None
+            feature_columns = default_columns
+        except Exception:
+            ml_model = None
+            feature_columns = default_columns
 
 # --- Pydantic model for data validation ---
 class TaxInput(BaseModel):
@@ -124,6 +147,8 @@ def calc_new_regime_tax(taxable_income):
 # --- API Endpoint ---
 @app.post("/predict_tax")
 def predict_tax(user_id: str = Depends(get_current_user)):
+    ensure_model_loaded()
+
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=DictCursor)
     try:

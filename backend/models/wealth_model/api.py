@@ -12,6 +12,7 @@ from jose import JWTError, jwt
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 from typing import List
+from threading import Lock
 
 # --- Environment Setup & App Initialization ---
 load_dotenv()
@@ -42,7 +43,30 @@ def get_db_connection():
 
 # --- Load ML Model ---
 base_dir = Path(__file__).resolve().parent
-pipeline = joblib.load(base_dir / "investment_model.pkl") if (base_dir / "investment_model.pkl").exists() else None
+pipeline = None
+_model_load_lock = Lock()
+
+def ensure_model_loaded():
+    global pipeline
+    if pipeline is not None:
+        return
+
+    with _model_load_lock:
+        if pipeline is not None:
+            return
+        model_path = base_dir / "investment_model.pkl"
+        if not model_path.exists():
+            pipeline = None
+            return
+        try:
+            pipeline = joblib.load(model_path)
+        except MemoryError:
+            raise HTTPException(
+                status_code=503,
+                detail="Insufficient memory to load wealth model. Try again later or increase server memory."
+            )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to load wealth model: {str(e)}")
 
 # --- Pydantic Schemas ---
 class WealthInput(BaseModel):
@@ -58,6 +82,8 @@ class WealthInput(BaseModel):
 # --- API Endpoint ---
 @app.post("/predict")
 def predict_wealth(user_id: str = Depends(get_current_user)):
+    ensure_model_loaded()
+
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=DictCursor)
     try:
