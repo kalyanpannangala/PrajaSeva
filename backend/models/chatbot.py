@@ -1,6 +1,7 @@
 # backend/models/chatbot.py
 
 import os
+import json
 import traceback
 import requests
 from pathlib import Path
@@ -14,9 +15,35 @@ from jose import JWTError, jwt
 
 # ---------------- ENV ----------------
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR / ".env.local")  # works locally
 
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+def _load_env_files() -> None:
+    """Load env files from common backend locations without overriding OS env vars."""
+    candidate_files = [
+        BASE_DIR / ".env.local",
+        BASE_DIR.parent / ".env.local",
+        BASE_DIR.parent / ".env",
+        BASE_DIR.parent.parent / ".env.local",
+        BASE_DIR.parent.parent / ".env",
+    ]
+    for env_file in candidate_files:
+        if env_file.exists():
+            load_dotenv(env_file, override=False)
+
+
+def _normalize_openrouter_key(raw_key: Optional[str]) -> Optional[str]:
+    if not raw_key:
+        return None
+
+    key = raw_key.strip().strip("\"'")
+    if key.lower().startswith("bearer "):
+        key = key[7:].strip()
+    return key or None
+
+
+_load_env_files()
+
+OPENROUTER_API_KEY = _normalize_openrouter_key(os.getenv("OPENROUTER_API_KEY"))
 AI_NAME = os.getenv("AI_NAME", "PrajaSeva AI")
 JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = "HS256"
@@ -52,6 +79,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
 def health():
     return {
         "api_key_present": bool(OPENROUTER_API_KEY),
+        "api_key_has_bearer_prefix": bool(
+            os.getenv("OPENROUTER_API_KEY", "").strip().lower().startswith("bearer ")
+        ),
         "init_error": init_error
     }
 
@@ -154,12 +184,32 @@ def chat_with_openrouter(question: str) -> str:
         print("RAW RESPONSE:", response.text)
 
         if response.status_code != 200:
-            raise RuntimeError(response.text)
+            error_detail = response.text
+            try:
+                parsed = response.json()
+                error_detail = parsed.get("error", {}).get("message", response.text)
+            except json.JSONDecodeError:
+                pass
+
+            if response.status_code == 401:
+                raise RuntimeError(
+                    "OpenRouter authentication failed (401). "
+                    "Check OPENROUTER_API_KEY in your backend env; it should be a valid "
+                    "OpenRouter key without a leading 'Bearer '. "
+                    f"Provider message: {error_detail}"
+                )
+
+            raise RuntimeError(f"OpenRouter request failed ({response.status_code}): {error_detail}")
 
         data = response.json()
 
         return data["choices"][0]["message"]["content"]
 
+    except RuntimeError as e:
+        print("❌ OpenRouter error:")
+        print(traceback.format_exc())
+        init_error = str(e)
+        raise
     except Exception as e:
         print("❌ OpenRouter error:")
         print(traceback.format_exc())

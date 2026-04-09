@@ -73,7 +73,7 @@ const FloatingChatbot = () => {
         if (!token) {
              throw new Error("Not authenticated");
         }
-        const response = await fetch('https://kalyanpannangala-prajaseva.hf.space/chat/chat', {
+        const response = await fetch('http://127.0.0.1:8000/chat/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ question: currentInput })
